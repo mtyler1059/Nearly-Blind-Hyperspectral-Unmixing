@@ -666,7 +666,7 @@ def algo_1_active_learning(X, W, m_initial=5, M_total=40, num_eigs=50, gamma=0.1
 
 
 
-def run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha = 10.0, lam = 1.0, gamma = 1.0, rho = 1.0, print_bool = True):
+def run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha = 10.0, lam = 1.0, gamma = 1.0, rho = 1.0, print_bool = True, GRSU_bool = True):
     # ==========================================
     # Phase 0: Load Data (Mocking Jasper Ridge)
     # ==========================================
@@ -711,8 +711,10 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha = 10.0, lam = 1.0, gam
     # ==========================================
     # Phase 3: Semi-Supervised Unmixing
     # ==========================================
-    if print_bool:
+    if print_bool and GRSU_bool:
         print("Running GRSU (and GLU) Unmixing...")
+    elif print_bool:
+         print("Running GLU Unmixing...")
 
     # Hyperparameters based on the Jasper Ridge dataset in Table II [cite: 339, 340]
     # alpha = 10.0
@@ -722,18 +724,23 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha = 10.0, lam = 1.0, gam
 
     # Note: The paper mentions an overlap between X_hat and X, but updates
     # the abundance map for all pixels in X anyway.
-    A_final, S_final = algo_3_grsu(
-        X=X,
-        X_hat=X_hat,
-        A_hat=A_hat_OH,
-        alpha=alpha,
-        lam=lam,
-        gamma=gamma,
-        rho=rho,
-        max_iters=1000,
-        eps=1e-3,
-        k=50
-    )
+
+    # If we are only running GLU
+    if not GRSU_bool:
+        A_final, S_final = algo_2_glu(X, X_hat, A_hat_OH, alpha, k=k)
+    else:
+        A_final, S_final = algo_3_grsu(
+            X=X,
+            X_hat=X_hat,
+            A_hat=A_hat_OH,
+            alpha=alpha,
+            lam=lam,
+            gamma=gamma,
+            rho=rho,
+            max_iters=1000,
+            eps=1e-3,
+            k=50
+        )
 
     # Calculate RMSE and SAD
     A_rmse = RMSE(A_final, A_gt)
