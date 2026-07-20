@@ -12,7 +12,7 @@ from sklearn.neighbors import NearestNeighbors
 from scipy.ndimage import gaussian_filter
 from itertools import product
 from joblib import Parallel, delayed
-
+from scipy.optimize import nnls
 
 
 
@@ -666,7 +666,7 @@ def algo_1_active_learning(X, W, m_initial=5, M_total=40, num_eigs=50, gamma=0.1
 
 
 
-def run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha = 10.0, lam = 1.0, gamma = 1.0, rho = 1.0, print_bool = True, GRSU_bool = True):
+def run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha = 10.0, lam = 1.0, gamma = 1.0, rho = 1.0, m_0 = 2, print_bool = True, GRSU_bool = True):
     # ==========================================
     # Phase 0: Load Data (Mocking Jasper Ridge)
     # ==========================================
@@ -693,8 +693,8 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha = 10.0, lam = 1.0, gam
     if print_bool:
         print("Running Active Learning...")
     # Start with 1 random pixel per material (m=4), sample up to 0.4% of total pixels (M=40) [cite: 323]
-    # num_eigs = 0.05% of the pixels?
-    labeled_indices = algo_1_active_learning(X, W, m_initial=2, M_total=int(0.004*N), num_eigs=int(N*0.005))
+    # num_eigs = 0.5% of the pixels (equal to K)?
+    labeled_indices = algo_1_active_learning(X, W, m_initial=m_0, M_total=int(0.004*N), num_eigs=int(N*0.005))
 
     # ==========================================
     # Phase 2: Extract Training Data
@@ -727,7 +727,7 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha = 10.0, lam = 1.0, gam
 
     # If we are only running GLU
     if not GRSU_bool:
-        A_final, S_final = algo_2_glu(X, X_hat, A_hat_OH, alpha, k=k)
+        A_final, S_final = algo_2_glu(X, X_hat, A_hat_OH, alpha, k=int(N*0.005))
     else:
         A_final, S_final = algo_3_grsu(
             X=X,
@@ -739,7 +739,7 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha = 10.0, lam = 1.0, gam
             rho=rho,
             max_iters=1000,
             eps=1e-3,
-            k=50
+            k=int(N*0.005)
         )
 
     # Calculate RMSE and SAD
@@ -778,7 +778,7 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha = 10.0, lam = 1.0, gam
 
 
 # Optimizing Parameters
-def sum_RMSE_SAD(X, A_gt, S_gt, N, alpha_0, lam_0, gamma_0, rho_0, print_bool = True):
+def sum_RMSE_SAD(X, A_gt, S_gt, N, alpha_0, lam_0, gamma_0, rho_0, m_0, print_bool = True, GRSU_bool = True):
     """
     Returns the sum RMSE + SAD.
 
@@ -790,10 +790,10 @@ def sum_RMSE_SAD(X, A_gt, S_gt, N, alpha_0, lam_0, gamma_0, rho_0, print_bool = 
     gamma (numpy.ndarray): Regularization parameter for S subproblem.
     rho (numpy.ndarray): Regularization parameter for A subproblem.
     """
-    A_f, S_f, A_RMSE, S_SAD = run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha_0, lam_0, gamma_0, rho_0, print_bool = print_bool)
+    A_f, S_f, A_RMSE, S_SAD = run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha_0, lam_0, gamma_0, rho_0, m_0, print_bool = print_bool, GRSU_bool = GRSU_bool)
     return A_RMSE + S_SAD
 
-def parameter_testing(X, A_gt, S_gt, N, alpha, lam, gamma, rho, print_bool = True):
+def parameter_testing(X, A_gt, S_gt, N, alpha, lam, gamma, rho, m_0, print_bool = True, GRSU_bool = True):
     """
     Performs grid search on the regularization parameters (alpha, lam, gamma, rho) to find
     the optimal combination of the four, minimizing the sum A_RMSE + S_SAD.
@@ -814,7 +814,7 @@ def parameter_testing(X, A_gt, S_gt, N, alpha, lam, gamma, rho, print_bool = Tru
 
     # Run the function using combinations
     results = Parallel(n_jobs =-1)(
-        delayed(sum_RMSE_SAD)(X, A_gt, S_gt, N, alpha_0, lam_0, gamma_0, rho_0, print_bool) for alpha_0, lam_0, gamma_0, rho_0 in combos
+        delayed(sum_RMSE_SAD)(X, A_gt, S_gt, N, alpha_0, lam_0, gamma_0, rho_0, m_0, print_bool, GRSU_bool) for alpha_0, lam_0, gamma_0, rho_0 in combos
     )
 
     # Create a 4D array to match the set order
