@@ -319,7 +319,9 @@ def spectral_angle(s_i, s_j):
     Returns:
     float: spectral angle in radians.
     """
-    cos_theta = np.dot(s_i, s_j) / (np.linalg.norm(s_i) * np.linalg.norm(s_j))
+    norm_i = np.linalg.norm(s_i) + 1e-8
+    norm_j = np.linalg.norm(s_j) + 1e-8
+    cos_theta = np.dot(s_i, s_j) / (norm_i * norm_j)
     return np.arccos(np.clip(cos_theta, -1.0, 1.0))
 
 def SAD(S, S_gt):
@@ -333,9 +335,9 @@ def SAD(S, S_gt):
     Returns:
     float: spectral angle distance in degrees.
     """
-    p = S_gt.shape[0]
-    total = sum(spectral_angle(S[i], S_gt[i]) for i in range(p))
-    return (total / p) * (180 / np.pi)
+    q = S_gt.shape[1]
+    total = sum(spectral_angle(S[:, i], S_gt[:, i]) for i in range(q))
+    return (total / q) * (180 / np.pi)
 
 
 
