@@ -1186,3 +1186,170 @@ def algo_2_almm(X, S, alpha, beta, gamma, eta, maxIter):
 
         
     return E, A, T, B
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def algo_2_almm_optimized(X, S, alpha, beta, gamma, eta, maxIter):
+    """
+    Optimized ALMM-Based SVDL.
+    Note: Requires passing A_initial (from SCLSU) as an argument since 
+    SCLSU is not defined in the scope of this snippet.
+    """
+    A_initial = SCLSU(X, S)
+    p, N = X.shape
+    p, q = S.shape
+    L = int(p / 2)
+
+    # 1. Precompute loop-invariant matrices
+    StS = S.T @ S
+    StX = S.T @ X
+    gamma_SSt = gamma * (S @ S.T)
+
+    # Initialize standard variables
+    G = np.zeros((q, N))
+    H = np.zeros((q, N))
+    M = np.zeros((q, N))
+    B = np.zeros((L, N))
+
+    # 2. Track N x N diagonal matrices as 1D vectors to save O(N^2) memory
+    t_diag = np.ones(N)       # Equivalent to np.eye(N)
+    delta_diag = np.zeros(N)  # Equivalent to np.zeros((N, N))
+    u_diag = np.zeros(N)      # Equivalent to np.zeros((N, N))
+
+    Lambda = np.zeros((q, N)) 
+    Upsilon = np.zeros((q, N)) 
+    Omega = np.zeros((q, N)) 
+
+    Q = np.zeros((p, L)) 
+    Pi = np.zeros((p, L)) 
+
+    A = np.copy(A_initial)
+
+    # Generate random orthogonal matrix for E
+    np.random.seed(42)
+    random_matrix = np.random.randn(p, L)
+    E, _ = np.linalg.qr(random_matrix)
+
+    # Initialize scalars
+    t = 0
+    xi = 1e-3
+    xi_max = 1e6
+    rho = 1.5
+    epsilon = 1e-6
+    converged = False
+
+    # Identity matrices for subproblems (sizes q, L, p only!)
+    I_q = np.eye(q)
+    I_L = np.eye(L)
+    I_p = np.eye(p)
+
+    while (not converged) and t < maxIter:
+        
+        # M subproblem (solve instead of inv)
+        # S.T @ E @ B evaluated as (S.T @ E) @ B for faster multiplication
+        term2_M = StX - (S.T @ E) @ B + (xi * (A * t_diag)) - Omega
+        M_new = np.linalg.solve(StS + xi * I_q, term2_M)
+
+        # B subproblem
+        term2_B = (E.T @ X) - (E.T @ S) @ M_new
+        B_new = np.linalg.solve((E.T @ E) + beta * I_L, term2_B)
+
+        # A subproblem
+        # Multiplication by diagonal matrix T is just broadcasting: * t_diag
+        term1_A = (xi * G) + Lambda + (xi * H) + Upsilon + (Omega * t_diag) + (xi * M_new * t_diag)
+        
+        # term2_A was purely diagonal, so we just divide by the diagonal values!
+        diag_inv = 1.0 / (xi * (t_diag ** 2) + 2 * xi)
+        A_new = term1_A * diag_inv
+        A_new = A_new / (A_new.sum(axis=0, keepdims=True) + 1e-10)
+
+        # T subproblem (Woodbury Matrix Identity to avoid N x N operations)
+        Y = xi * M_new + Omega
+        A_At = A_new @ A_new.T
+        
+        # K = (I_q + A A^T)^{-1}. Since q is small (e.g. 10), this is instant.
+        K = np.linalg.solve(I_q + A_At, I_q) 
+        
+        # Calculate exactly the diagonal components needed
+        Z = Y - (K @ A_At) @ Y
+        diag_At_Z = np.sum(A_new * Z, axis=0) # Fast way to get diag of A^T Z
+        diag_A_K_A = np.sum(A_new * (K @ A_new), axis=0)
+        
+        D = xi * u_diag + delta_diag
+        T_new_diag = (1.0 / xi) * diag_At_Z + (1.0 / xi) * D * (1.0 - diag_A_K_A)
+
+        # E subproblem (Right-side solve using Transpose)
+        term1_E = (X @ B_new.T) - S @ (M_new @ B_new.T) + (xi * Q) + Pi
+        term2_E_inv = (B_new @ B_new.T) + xi * I_L
+        E_new = np.linalg.solve(term2_E_inv, term1_E.T).T
+
+        # Q subproblem
+        term1_Q_inv = gamma_SSt + (eta * Q @ Q.T) + xi * I_p
+        term2_Q = (eta * Q) + (xi * E_new) - Pi
+        Q_new = np.linalg.solve(term1_Q_inv, term2_Q)
+
+        # G, H, U subproblems
+        term1_G = np.maximum(0, np.abs(A_new - (Lambda / xi)) - (alpha / xi))
+        term2_G = np.sign(A_new - (Lambda / xi))
+        G_new = term1_G * term2_G 
+        H_new = np.maximum(0, A_new - (Upsilon / xi))
+        U_new_diag = np.maximum(0, T_new_diag - (delta_diag / xi))
+
+        # AT subproblem 
+        AT_new = A_new * T_new_diag
+
+        # Update Lagrange multipliers
+        Lambda_new = Lambda + xi * (G_new - A_new)
+        Upsilon_new = Upsilon + xi * (H_new - A_new)
+        Omega_new = Omega + xi * (M_new - AT_new)
+        Pi_new = Pi + xi * (Q_new - E_new)
+        delta_diag_new = delta_diag + xi * (U_new_diag - T_new_diag)
+
+        xi_new = min(rho * xi, xi_max)
+
+        # Check convergence conditions
+        if ((np.linalg.norm(G_new - A_new) < epsilon) and 
+            (np.linalg.norm(H_new - A_new) < epsilon) and
+            (np.linalg.norm(M_new - AT_new) < epsilon) and
+            (np.linalg.norm(Q_new - E_new) < epsilon) and 
+            (np.linalg.norm(U_new_diag - T_new_diag) < epsilon) and
+            (np.linalg.norm(E_new - E) < epsilon)):
+
+            converged = True
+        else:
+            t += 1
+
+            M = M_new
+            B = B_new
+            A = A_new
+            t_diag = T_new_diag
+            E = E_new
+            Q = Q_new
+            G = G_new
+            H = H_new
+            u_diag = U_new_diag
+
+            Lambda = Lambda_new
+            Upsilon = Upsilon_new
+            Omega = Omega_new
+            Pi = Pi_new
+            delta_diag = delta_diag_new
+            xi = xi_new
+
+    # Reconstruct the N x N diagonal matrix T at the very end to match expected output signature
+    T_final = np.diag(t_diag)
+    
+    return E, A, T_final, B
