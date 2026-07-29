@@ -680,7 +680,7 @@ def algo_1_active_learning(X, W, m_initial=5, M_total=40, num_eigs=50, gamma=0.1
 
 
 
-def run_unmixing_pipeline_example(X, A_gt, S_gt, N, iters, alpha = 10.0, lam = 1.0, gamma = 1.0, rho = 1.0, m_0 = 2, print_bool = True, OH_labels = True, GRSU_bool = True, A_error = False, RMSE_plot = False, title_0 = ""):
+def run_unmixing_pipeline_example(X, A_gt, S_gt, N, iters, alpha = 10.0, lam = 1.0, gamma = 1.0, rho = 1.0, m_0 = 2, print_bool = True, OH_labels = True, GRSU_bool = True, A_error = False, RMSE_plot = False, title_0 = "", prep = None):
     # ==========================================
     # Phase 0: Load Data (Mocking Jasper Ridge)
     # ==========================================
@@ -695,40 +695,49 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, iters, alpha = 10.0, lam = 1
     # Mock ground-truth abundance map (only used to simulate human labeling)
     #A_gt = np.random.dirichlet(np.ones(q), size=N, seed=42).T
 
-    # ==========================================
-    # Phase 1: Active Learning (Algorithm 1)
-    # ==========================================
-    if print_bool:
-        print("Building initial graph for Active Learning...")
-    # Scikit-learn expects (samples, features), so we pass X.T
-    # K = 50 was picked for a 10000 pixel image, so roughly 0.5%
-    G, W = build_custom_knn_graph(X.T, K=int(N*0.005))
+    # Run Phase 1 and Phase 2 if it isn't already given
 
-    if print_bool:
-        print("Running Active Learning...")
-    # Start with 1 random pixel per material (m=4), sample up to 0.4% of total pixels (M=40) [cite: 323]
-    # num_eigs = 0.5% of the pixels (equal to K)?
-    labeled_indices = algo_1_active_learning(X, W, m_initial=m_0, M_total=int(0.004*N), num_eigs=int(N*0.005))
+    if prep is None:
+        # ==========================================
+        # Phase 1: Active Learning (Algorithm 1)
+        # ==========================================
+        if print_bool:
+            print("Building initial graph for Active Learning...")
+        # Scikit-learn expects (samples, features), so we pass X.T
+        # K = 50 was picked for a 10000 pixel image, so roughly 0.5%
+        G, W = build_custom_knn_graph(X.T, K=int(N*0.005))
 
-    # ==========================================
-    # Phase 2: Extract Training Data
-    # ==========================================
-    if print_bool:
-        print("Extracting training data and generating pseudo-labels...")
-    # Extract the spectral signatures for the selected pixels
-    X_hat = X[:, labeled_indices]
+        if print_bool:
+            print("Running Active Learning...")
+        # Start with 1 random pixel per material (m=4), sample up to 0.4% of total pixels (M=40) [cite: 323]
+        # num_eigs = 0.5% of the pixels (equal to K)?
+        labeled_indices = algo_1_active_learning(X, W, m_initial=m_0, M_total=int(0.004*N), num_eigs=int(N*0.005))
 
-    # Extract ground-truth abundances and convert to One-Hot pseudo-labels [cite: 321, 322]
-    A_hat_exact = A_gt[:, labeled_indices]
-    A_hat_OH = generate_one_hot_labels(A_hat_exact)
+        # ==========================================
+        # Phase 2: Extract Training Data
+        # ==========================================
+        if print_bool:
+            print("Extracting training data and generating pseudo-labels...")
+        # Extract the spectral signatures for the selected pixels
+        X_hat = X[:, labeled_indices]
 
-    # Pick between Exact or OH labels
-    if OH_labels:
-        A_hat_test = A_hat_OH
-        label_title = "OH"
+        # Extract ground-truth abundances and convert to One-Hot pseudo-labels [cite: 321, 322]
+        A_hat_exact = A_gt[:, labeled_indices]
+        A_hat_OH = generate_one_hot_labels(A_hat_exact)
+
+        # Pick between Exact or OH labels
+        if OH_labels:
+            A_hat_test = A_hat_OH
+            label_title = "OH"
+        else:
+            A_hat_test = A_hat_exact
+            label_title = "Exact"
+
     else:
-        A_hat_test = A_hat_exact
-        label_title = "Exact"
+        # Extract values from array
+        X_hat = prep[0]
+        A_hat_test = prep[1]
+        label_title = prep[2]
 
     # ==========================================
     # Phase 3: Semi-Supervised Unmixing
@@ -804,7 +813,7 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, iters, alpha = 10.0, lam = 1
 
 
 # Optimizing Parameters
-def sum_RMSE_SAD(X, A_gt, S_gt, N, alpha_0, lam_0, gamma_0, rho_0, m_0, print_bool = True, GRSU_bool = True):
+def sum_RMSE_SAD(X, A_gt, S_gt, N, iters, alpha_0, lam_0, gamma_0, rho_0, m_0, print_bool = True, OH_labels = True, GRSU_bool = True, prep = None):
     """
     Returns the sum RMSE + SAD.
 
@@ -816,10 +825,13 @@ def sum_RMSE_SAD(X, A_gt, S_gt, N, alpha_0, lam_0, gamma_0, rho_0, m_0, print_bo
     gamma (numpy.ndarray): Regularization parameter for S subproblem.
     rho (numpy.ndarray): Regularization parameter for A subproblem.
     """
-    A_f, S_f, A_RMSE, S_SAD = run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha_0, lam_0, gamma_0, rho_0, m_0, print_bool = print_bool, GRSU_bool = GRSU_bool)
+    A_f, S_f, A_RMSE, S_SAD = run_unmixing_pipeline_example(X, A_gt, S_gt, 
+                                                            N, iters, alpha_0, lam_0, gamma_0, rho_0, m_0, 
+                                                            print_bool = print_bool, OH_labels = OH_labels, GRSU_bool = GRSU_bool, 
+                                                            prep = prep)
     return A_RMSE + S_SAD
 
-def parameter_testing(X, A_gt, S_gt, N, alpha, lam, gamma, rho, m_0, print_bool = True, GRSU_bool = True):
+def parameter_testing(X, A_gt, S_gt, N, iters, alpha, lam, gamma, rho, m_0, print_bool = True, GRSU_bool = True, OH_labels = True):
     """
     Performs grid search on the regularization parameters (alpha, lam, gamma, rho) to find
     the optimal combination of the four, minimizing the sum A_RMSE + S_SAD.
@@ -838,9 +850,48 @@ def parameter_testing(X, A_gt, S_gt, N, alpha, lam, gamma, rho, m_0, print_bool 
     # Create a list of each combination
     combos = list(product(alpha, lam, gamma, rho))
 
+    # Precompute the graph and labels
+
+    # ==========================================
+    # Phase 1: Active Learning (Algorithm 1)
+    # ==========================================
+    if print_bool:
+        print("Building initial graph for Active Learning...")
+    # Scikit-learn expects (samples, features), so we pass X.T
+    # K = 50 was picked for a 10000 pixel image, so roughly 0.5%
+    G, W = build_custom_knn_graph(X.T, K=int(N*0.005))
+
+    if print_bool:
+        print("Running Active Learning...")
+    # Start with 1 random pixel per material (m=4), sample up to 0.4% of total pixels (M=40) [cite: 323]
+    # num_eigs = 0.5% of the pixels (equal to K)?
+    labeled_indices = algo_1_active_learning(X, W, m_initial=m_0, M_total=int(0.004*N), num_eigs=int(N*0.005))
+
+    # ==========================================
+    # Phase 2: Extract Training Data
+    # ==========================================
+    if print_bool:
+        print("Extracting training data and generating pseudo-labels...")
+    # Extract the spectral signatures for the selected pixels
+    X_hat = X[:, labeled_indices]
+
+    # Extract ground-truth abundances and convert to One-Hot pseudo-labels [cite: 321, 322]
+    A_hat_exact = A_gt[:, labeled_indices]
+    A_hat_OH = generate_one_hot_labels(A_hat_exact)
+
+    # Pick between Exact or OH labels
+    if OH_labels:
+        A_hat_test = A_hat_OH
+        label_title = "OH"
+    else:
+        A_hat_test = A_hat_exact
+        label_title = "Exact"
+
+    prep = [X_hat, A_hat_test, label_title]
+
     # Run the function using combinations
     results = Parallel(n_jobs =-1)(
-        delayed(sum_RMSE_SAD)(X, A_gt, S_gt, N, alpha_0, lam_0, gamma_0, rho_0, m_0, print_bool, GRSU_bool) for alpha_0, lam_0, gamma_0, rho_0 in combos
+        delayed(sum_RMSE_SAD)(X, A_gt, S_gt, N, iters, alpha_0, lam_0, gamma_0, rho_0, m_0, print_bool, OH_labels, GRSU_bool, prep) for alpha_0, lam_0, gamma_0, rho_0 in combos
     )
 
     # Create a 4D array to match the set order
@@ -1743,7 +1794,7 @@ def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, ma
     # Phase 3: Semi-Supervised Unmixing
     # ==========================================
     if print_bool:
-        print("Running ALMM (and GLU) Unmixing on {label_title}...")
+        print(f"Running ALMM (and GLU) Unmixing on {label_title}...")
 
     # Note: The paper mentions an overlap between X_hat and X, but updates
     # the abundance map for all pixels in X anyway.
@@ -1824,5 +1875,391 @@ def graph_plotter(i, A_error, RMSE_plot, A_error_array, RMSE_array, title_0):
         fig.suptitle(title_0, fontsize=16)
         plt.tight_layout()
         plt.show()
+
+    return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def load_data(name, typename, sample = False):
+
+    """
+    Loads data into X, S, and A.
+
+    Parameters:
+    name (string): Name of the dataset. Options include:
+        'my_custom_dataset.npy' (nonlinear)
+        'synth_chem_data' (Original chem data)
+        'synth_CuSO4_data' (CuSO4 data)         
+        'synth_FeCl3_data' (FeCl3 data)
+        'synth_FeSO4_data' (FeSO4 data)
+        'processed_data/processed_data/urban/urban_processed_data.npy' (Urban dataset)
+
+    type (string): Type of dataset loaded. Options include:
+        'chem'
+        'nonlinear' (additionally flattens the image)
+        'HSI'
+
+    sample (bool): For HSI images only, whether to sample a 50x50 patch or not.
+
+    Returns:
+    X (numpy.ndarray): Data matrix (p, N).
+    S (numpy.ndarray): Endmember library (p, q).
+    A (numpy.ndarray): Abundance map (q, N).
+    """
+
+    data = np.load(name, allow_pickle = True).item()
+
+    # 1. See what keys are inside
+    print("Keys in the dataset:", data.keys())
+
+    # Grabbing X, S, and A from the file
+    if typename != 'HSI':
+        A_gt = data['A_gt']
+        S_gt = data['S_gt']
+        X_gt = data['X']
+
+    # Printing the shape based on typename
+    if typename == 'chem':
+        # 2. Inspect the exact shapes of the arrays
+        print("Shape of X (Chemistry Sample):", data['X'].shape)
+        print("Shape of A_gt (Abundance Map):", data['A_gt'].shape)
+        print("Shape of S_gt (Endmember Spectra):", data['S_gt'].shape)
+
+        # 3. (Optional) Look at a small slice of the actual numbers
+        print("\nFirst chemical's concentration in X (how much of class 1?):\n", data['X'][0, 0])
+
+    elif typename == 'nonlinear':
+        # 2. Inspect the exact shapes of the arrays
+        print("Shape of X (HSI Image):", data['X'].shape)
+        print("Shape of A_gt (Abundance Map):", data['A_gt'].shape)
+        print("Shape of S_gt (Endmember Spectra):", data['S_gt'].shape)
+
+        # 3. (Optional) Look at a small slice of the actual numbers
+        print("\nFirst pixel's spectra in X:\n", data['X'][0, 0, :])
+
+        # Reshaping X from spatial image (10, 1000, 30) to 2D image (30, 10000)
+        H, W, p = X_gt.shape  # H=10, W=1000, p=30
+        X_gt_flat = X_gt.reshape(-1, p).T  # reshape to (p, N) = (30, 10000)
+
+        print(X_gt_flat.shape)  # should print (30, 2500)
+
+    elif typename == 'HSI':
+        A_gt = data['A']
+        S_gt = data['S']
+        X_gt = data['X']
+
+        S_gt_HSI = S_gt['S_ref']
+        A_gt_HSI = A_gt['A_ref']
+
+        # 1. Let's check X just to be sure it IS an array
+        print("Type of X:", type(data['X']))
+        if hasattr(data['X'], 'shape'):
+            print("Shape of X:", data['X'].shape)
+
+        # 2. Let's peek inside the dictionary 'A'
+        print("\nType of A:", type(data['A']))
+        if isinstance(data['A'], dict):
+            print("Keys inside A:", data['A'].keys())
+
+        # 3. Let's peek inside the dictionary 'S'
+        print("\nType of S:", type(data['S']))
+        if isinstance(data['S'], dict):
+            print("Keys inside S:", data['S'].keys())
+
+
+    # Printing the shapes
+    if typename == 'chem' or typename == 'nonlinear':  
+        # Checking the shapes
+        print(type(S_gt))
+        print(S_gt.shape)
+        print(S_gt.dtype)
+
+        print(type(A_gt ))
+        print(A_gt .shape)
+        print(A_gt .dtype)
+
+    # Returning X, S, and A
+    if typename == 'chem':
+        print("Shape of X:", X_gt.shape)
+        return X_gt, S_gt, A_gt 
+    
+    elif typename == 'nonlinear':
+        print("Shape of X:", X_gt_flat.shape)
+        return X_gt, S_gt, A_gt 
+    elif typename == 'HSI':
+
+        # Sample 50x50 patch or return the entire image
+        if sample == True:
+
+            # Example: grab a 50x50 spatial patch instead of random pixels
+            H, W = 307, 307
+            patch_size = 50
+            row_start, col_start = 100, 100  # pick wherever
+
+            X_HSI_img = X_gt.T.reshape(H, W, -1)  # reshape to (307, 307, p)
+            patch = X_HSI_img[row_start:row_start+patch_size, col_start:col_start+patch_size, :]
+            X_HSI_test = patch.reshape(-1, patch.shape[-1]).T  # back to (p, N_patch)
+            print("X (reshaped):", X_HSI_test.shape)
+
+            A_gt_HSI_img = A_gt_HSI.T.reshape(H, W, -1)
+            patch_gt_HSI = A_gt_HSI_img[row_start:row_start+patch_size, col_start:col_start+patch_size, :]
+            A_gt_HSI_test = patch_gt_HSI.reshape(-1, patch_gt_HSI.shape[-1]).T
+
+            return X_HSI_test, S_gt_HSI, A_gt_HSI_test
+
+        else:
+
+            return X_gt, S_gt_HSI, A_gt_HSI
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def synthetic_linear_data(samples, channels):
+    
+    # samples = 2000 # N
+    # channels = 300 # p
+    np.random.seed(42)
+
+    # Create random labels and abundance matrix
+    L = np.random.uniform(0,1,samples)
+    A = np.array([L,1-L])
+
+    # Smooth out the two spectras
+    s_1 = gaussian_filter(np.random.uniform(0,1,channels),2)
+    s_2 = gaussian_filter(np.random.uniform(0,1,channels),2)
+
+    S_T = np.array([s_1,s_2])
+
+    S = S_T.T
+
+
+    # Create the linear mixing model
+    X=S@A
+    error_std = 0.05
+
+    E = np.random.normal(loc=0.0, scale=error_std, size=X.shape)
+
+    X=X+E
+
+    return X, S, A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def best_param_grsu_glu(X, S, A, samples, iters_param, iters_final, m_0, print_bool = True, OH_labels = True, GRSU_bool = True, A_error = False, RMSE_plot = False, title_0 = ""):
+
+    # Set up grid
+    alpha_vals = np.array([10, 20, 50, 100])
+    lam_vals = np.sort(np.concatenate([10**np.arange(4), 5 * 10**np.arange(4)]))
+    gamma_vals = 10.0 ** np.arange(-2, 3)
+    rho_vals = 10.0 ** np.arange(-2, 3)
+
+    
+    best_params = parameter_testing(X = X, A_gt = A, S_gt = S, N = samples, iters = iters_param, 
+                                    alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = m_0, 
+                                    print_bool = print_bool, GRSU_bool = GRSU_bool, OH_labels = OH_labels)
+    
+    # Save best params
+    alpha_0 = best_params[0]
+    lam_0 = best_params[1]
+    gamma_0 = best_params[2]
+    rho_0 = best_params[3]
+
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X, A_gt = A, S_gt = S, N = samples, iters = iters_final, 
+                                                                                                    alpha = alpha_0, lam = lam_0, gamma = gamma_0, rho = rho_0, m_0 = m_0, 
+                                                                                                    print_bool = print_bool, OH_labels = OH_labels, GRSU_bool = GRSU_bool, 
+                                                                                                    A_error = A_error, RMSE_plot = RMSE_plot, title_0 = title_0)
+    
+
+    return A_f, S_f, A_rmse, S_sad
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def best_alpha_ALMM(X, S, A, iters_param, iters_final, alpha_0 = (1e-3 + 1e-2)/2, beta_0 = (1e-3 + 1e-2)/2, gamma_0 = (1e-3 + 1e-2)/2, eta_0 = (1e-3 + 1e-2)/2, A_error = False, RMSE_plot = False, title_0 = ""):
+
+    # Pick the best alpha
+    best_rmse = np.inf
+    best_alpha = None
+
+    alpha_vals = [alpha_0, alpha_0/10, alpha_0/100, alpha_0/1000, alpha_0/10000]
+
+    for a in alpha_vals:
+
+        E_f, A_f, T_f, B_f = algo_2_almm_optimized(X = X, S = S, A_gt = A, 
+                                                    alpha = a, beta = beta_0, gamma = gamma_0, eta = eta_0, 
+                                                    maxIter = iters_param)
+
+        # Check for labeling issues
+        corr = np.corrcoef(A_f[0], A[0])[0, 1]
+        if corr < 0:
+            A_f_corrected = 1 - A_f
+        else:
+            A_f_corrected = A_f
+
+        rmse = RMSE(A_f_corrected, A)  # Calculate RMSE
+        print(f"alpha={a:.6f} -> RMSE={rmse:.4f}")
+
+        if rmse < best_rmse:
+            best_rmse = rmse
+            best_alpha = a
+
+    print(f"\nBest alpha: {best_alpha}, RMSE: {best_rmse:.4f}")
+
+    # Run on best parameters
+    E_f, A_f, T_f, B_f = algo_2_almm_optimized(X = X, S = S, A_gt = A, 
+                                                alpha = best_alpha, beta = beta_0, gamma = gamma_0, eta = eta_0, maxIter = iters_final, 
+                                                A_error = A_error, RMSE_plot = RMSE_plot, title_0 = title_0)
+
+    return E_f, A_f, T_f, B_f
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def abundance_plotting(X, A_gt, A_f_GLU, A_f_GRSU, A_f_ALMM, A_f_Graph_ALMM, title = 'Abundance Comparison (Class 2)', color_title = 'Abundance (Class 2)'):
+    ## Plotting abundance maps
+
+    # Run PCA
+    pca1 = PCA(n_components=2)
+    X_pca1 = pca1.fit_transform(X.T)
+
+    # Visualizing
+    fig, axes = plt.subplots(2, 3, figsize=(16, 10))
+
+    vmin, vmax = 0, 1  # fixed scale so colors are directly comparable across all 4 plots
+
+    # Top-left: Ground truth
+    sc1 = axes[0, 0].scatter(X_pca1[:,0], X_pca1[:,1], c=A_gt[0], vmin=vmin, vmax=vmax, cmap='viridis')
+    axes[0, 0].set_title('Ground Truth')
+
+    # Top-middle: GLU
+    sc2 = axes[0,1].scatter(X_pca1[:,0], X_pca1[:,1], c=A_f_GLU[0], vmin=vmin, vmax=vmax, cmap='viridis')
+    axes[0,1].set_title('GLU')
+
+    # Bottom-left: GRSU
+    sc3 = axes[1,0].scatter(X_pca1[:,0], X_pca1[:,1], c=A_f_GRSU[0], vmin=vmin, vmax=vmax, cmap='viridis')
+    axes[1,0].set_title('GRSU')
+
+    # Bottom-middle: ALMM
+    sc4 = axes[1, 1].scatter(X_pca1[:,0], X_pca1[:,1], c=A_f_ALMM[0], vmin=vmin, vmax=vmax, cmap='viridis')
+    axes[1, 1].set_title('ALMM')
+
+    # # Top-right: Graph-ALMM
+    sc5 = axes[0, 2].scatter(X_pca1[:,0], X_pca1[:,1], c=A_f_Graph_ALMM[0], vmin=vmin, vmax=vmax, cmap='viridis')
+    axes[0, 2].set_title('Graph-ALMM')
+
+    # Bottom-right: leave empty, or hide it
+    axes[1, 2].axis('off')
+
+    for ax in axes.flat:
+        ax.set_xlabel('PC1', fontsize=12)
+        ax.set_ylabel('PC2', fontsize=12)
+
+    fig.suptitle(title, fontsize=16)
+
+    fig.colorbar(sc4, ax=axes, label=color_title, shrink=0.8)
+
+    plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def image_plotting(A_gt, A_f_GLU, A_f_GRSU, A_f_ALMM, A_f_Graph_ALMM, k, col, patch_size, class_names, algo_names):
+
+    # Plot the images
+    fig, axes =  plt.subplots(nrows=k, ncols=col, figsize=(7 ,7))
+    A_gt_img = A_gt.reshape(k,patch_size,patch_size)
+    A_f_GLU_img = A_f_GLU.reshape(k,patch_size,patch_size)
+    A_f_GRSU_img = A_f_GRSU.reshape(k,patch_size,patch_size)
+    A_f_ALMM_img = A_f_ALMM.reshape(k,patch_size,patch_size)
+    A_f_Graph_ALMM_img = A_f_Graph_ALMM.reshape(k,patch_size,patch_size)
+
+    # class_names = ['Asphalt', 'Grass', 'Tree', 'Roof']
+    # algo_names = ['Ground Truth', 'GLU', 'GRSU', 'ALMM', 'ALMM-GLU']
+
+    # Print image of each algorithm with endmembers in this order: Asphalt, Grass, Tree, Roof
+    for i in range(k):
+        axes[i,0].pcolormesh(A_gt_img[i], cmap='viridis')
+        axes[i,1].pcolormesh(A_f_GLU_img[i], cmap='viridis')
+        axes[i,2].pcolormesh(A_f_GRSU_img[i], cmap='viridis')
+        axes[i,3].pcolormesh(A_f_ALMM_img[i], cmap='viridis')
+        axes[i,4].pcolormesh(A_f_Graph_ALMM_img[i], cmap='viridis')
+
+        axes[i,0].set_ylabel(class_names[i], fontsize=11) # Add endmember titles
+
+    for j in range(col):
+        axes[0, j].set_title(algo_names[j], fontsize=12)
 
     return
