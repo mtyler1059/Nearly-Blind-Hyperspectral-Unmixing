@@ -468,7 +468,7 @@ def algo_2_glu(X, X_hat, A_hat, alpha=10.0, k=50):
 
 
 
-def algo_3_grsu(X, X_hat, A_hat, alpha, lam, gamma, rho, max_iters=1000, eps=1e-3, k=50):
+def algo_3_grsu(X, X_hat, A_hat, alpha, lam, gamma, rho, A_gt, max_iters=1000, eps=1e-3, k=50, A_error = False, RMSE_plot = False, title_0 = ""):
     """
     Executes the Graph-Regularized Semi-Supervised Unmixing (GRSU) model (Algorithm 3).
 
@@ -490,6 +490,8 @@ def algo_3_grsu(X, X_hat, A_hat, alpha, lam, gamma, rho, max_iters=1000, eps=1e-
     """
     p, N = X.shape
     q, M = A_hat.shape
+    A_error_array = []
+    RMSE_array = []
 
     # --- 1. Graph Construction & Laplacian Partitioning ---
     X_tilde = np.concatenate((X_hat, X), axis=1)
@@ -562,6 +564,13 @@ def algo_3_grsu(X, X_hat, A_hat, alpha, lam, gamma, rho, max_iters=1000, eps=1e-
         Err = max(err_S, err_A)
 
         # g) Advance state for next iteration
+
+        # Calculate error
+        if A_error:
+            A_error_array.append(np.linalg.norm(A_new - A))
+        if RMSE_plot:
+            RMSE_array.append(RMSE(A, A_gt))
+
         S = S_new
         A = A_new
         B = B_new
@@ -569,6 +578,9 @@ def algo_3_grsu(X, X_hat, A_hat, alpha, lam, gamma, rho, max_iters=1000, eps=1e-
         T_bar = T_bar_new
 
         i += 1
+    
+    # Plot
+    graph_plotter(i, A_error, RMSE_plot, A_error_array, RMSE_array, title_0)
 
     return A, S
 
@@ -668,7 +680,7 @@ def algo_1_active_learning(X, W, m_initial=5, M_total=40, num_eigs=50, gamma=0.1
 
 
 
-def run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha = 10.0, lam = 1.0, gamma = 1.0, rho = 1.0, m_0 = 2, print_bool = True, GRSU_bool = True):
+def run_unmixing_pipeline_example(X, A_gt, S_gt, N, iters, alpha = 10.0, lam = 1.0, gamma = 1.0, rho = 1.0, m_0 = 2, print_bool = True, OH_labels = True, GRSU_bool = True, A_error = False, RMSE_plot = False, title_0 = ""):
     # ==========================================
     # Phase 0: Load Data (Mocking Jasper Ridge)
     # ==========================================
@@ -710,13 +722,21 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha = 10.0, lam = 1.0, gam
     A_hat_exact = A_gt[:, labeled_indices]
     A_hat_OH = generate_one_hot_labels(A_hat_exact)
 
+    # Pick between Exact or OH labels
+    if OH_labels:
+        A_hat_test = A_hat_OH
+        label_title = "OH"
+    else:
+        A_hat_test = A_hat_exact
+        label_title = "Exact"
+
     # ==========================================
     # Phase 3: Semi-Supervised Unmixing
     # ==========================================
     if print_bool and GRSU_bool:
-        print("Running GRSU (and GLU) Unmixing...")
+        print(f"Running GRSU (and GLU) Unmixing on {label_title}...")
     elif print_bool:
-         print("Running GLU Unmixing...")
+         print(f"Running GLU Unmixing on {label_title}...")
 
     # Hyperparameters based on the Jasper Ridge dataset in Table II [cite: 339, 340]
     # alpha = 10.0
@@ -729,19 +749,23 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, alpha = 10.0, lam = 1.0, gam
 
     # If we are only running GLU
     if not GRSU_bool:
-        A_final, S_final = algo_2_glu(X, X_hat, A_hat_OH, alpha, k=int(N*0.005))
+        A_final, S_final = algo_2_glu(X, X_hat, A_hat_test, alpha, k=int(N*0.005))
     else:
         A_final, S_final = algo_3_grsu(
             X=X,
             X_hat=X_hat,
-            A_hat=A_hat_OH,
+            A_hat=A_hat_test,
             alpha=alpha,
             lam=lam,
             gamma=gamma,
             rho=rho,
-            max_iters=1000,
+            max_iters=iters,
+            A_gt = A_gt,
             eps=1e-3,
-            k=int(N*0.005)
+            k=int(N*0.005),
+            A_error = A_error,
+            RMSE_plot = RMSE_plot,
+            title_0 = title_0
         )
 
     # Calculate RMSE and SAD
@@ -1204,7 +1228,7 @@ def algo_2_almm(X, S, alpha, beta, gamma, eta, maxIter):
 
 
 
-def algo_2_almm_optimized(X, S, alpha, beta, gamma, eta, maxIter):
+def algo_2_almm_optimized(X, S, A_gt, alpha, beta, gamma, eta, maxIter, A_error = False, RMSE_plot = False, title_0 = ""):
     """
     Optimized ALMM-Based SVDL.
     Note: Requires passing A_initial (from SCLSU) as an argument since 
@@ -1214,6 +1238,8 @@ def algo_2_almm_optimized(X, S, alpha, beta, gamma, eta, maxIter):
     p, N = X.shape
     p, q = S.shape
     L = int(p / 2)
+    A_error_array = []
+    RMSE_array = []
 
     # 1. Precompute loop-invariant matrices
     StS = S.T @ S
@@ -1334,6 +1360,20 @@ def algo_2_almm_optimized(X, S, alpha, beta, gamma, eta, maxIter):
         else:
             t += 1
 
+            # Calculate error
+            if A_error:
+                A_error_array.append(np.linalg.norm(A_new - A))
+            if RMSE_plot:
+                # Check for labeling issues
+                corr = np.corrcoef(A[0], A_gt[0])[0, 1]
+                if corr < 0:
+                    A_f_corrected = 1 - A
+                else:
+                    A_f_corrected = A
+
+                rmse = RMSE(A_f_corrected, A_gt)  # Calculate RMSE
+                RMSE_array.append(rmse)
+
             M = M_new
             B = B_new
             A = A_new
@@ -1353,6 +1393,9 @@ def algo_2_almm_optimized(X, S, alpha, beta, gamma, eta, maxIter):
 
     # Reconstruct the N x N diagonal matrix T at the very end to match expected output signature
     T_final = np.diag(t_diag)
+
+    # Plot
+    graph_plotter(t, A_error, RMSE_plot, A_error_array, RMSE_array, title_0)
     
     return E, A, T_final, B
 
@@ -1400,7 +1443,7 @@ def half_threshold(z, alpha, xi):
 
 
 
-def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_0, L_uu, L_lu_T_A_hat_T, labeled_indices):
+def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_0, L_uu, L_lu_T_A_hat_T, labeled_indices, A_error, RMSE_plot, A_gt, title_0):
     """
     Optimized ALMM-Based SVDL.
     Note: Requires passing A_initial (from SCLSU) as an argument since 
@@ -1602,6 +1645,20 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
         else:
             t += 1
 
+            # Calculate error
+            if A_error:
+                A_error_array.append(np.linalg.norm(A_new - A))
+            if RMSE_plot:
+                # Check for labeling issues
+                corr = np.corrcoef(A[0], A_gt[0])[0, 1]
+                if corr < 0:
+                    A_f_corrected = 1 - A
+                else:
+                    A_f_corrected = A
+
+                rmse = RMSE(A_f_corrected, A_gt)  # Calculate RMSE
+                RMSE_array.append(rmse)
+
             M = M_new
             B = B_new
             A = A_new
@@ -1621,6 +1678,9 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
 
     # Reconstruct the N x N diagonal matrix T at the very end to match expected output signature
     T_final = np.diag(t_diag)
+
+    # Plot
+    graph_plotter(t, A_error, RMSE_plot, A_error_array, RMSE_array, title_0)
     
     return E, A, T_final, B
 
@@ -1638,7 +1698,7 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
 
 
 
-def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, maxIter, M_total_0, m_0 = 2, xi_0 = 1e-3, OH_labels = True, print_bool = True):
+def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, maxIter, M_total_0, m_0 = 2, xi_0 = 1e-3, OH_labels = True, print_bool = True, A_error = False, RMSE_plot = False, title_0 = ""):
 
     # ==========================================
     # Phase 1: Active Learning (Algorithm 1)
@@ -1672,14 +1732,16 @@ def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, ma
     if OH_labels:
         A_hat_OH = generate_one_hot_labels(A_hat_exact)
         L_lu_T_A_hat_T = L_lu.T @ A_hat_OH.T
+        label_title = "OH"
     else:
         L_lu_T_A_hat_T = L_lu.T @ A_hat_exact.T
+        label_title = "Exact"
 
     # ==========================================
     # Phase 3: Semi-Supervised Unmixing
     # ==========================================
     if print_bool:
-        print("Running ALMM (and GLU) Unmixing...")
+        print("Running ALMM (and GLU) Unmixing on {label_title}...")
 
     # Note: The paper mentions an overlap between X_hat and X, but updates
     # the abundance map for all pixels in X anyway.
@@ -1697,7 +1759,8 @@ def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, ma
         X, A_GLU, S_GLU, alpha = alpha, 
         beta = beta, gamma = gamma, eta = eta, 
         maxIter = maxIter, xi_0 = xi_0, 
-        L_uu = L_uu, L_lu_T_A_hat_T = L_lu_T_A_hat_T, labeled_indices = labeled_indices)
+        L_uu = L_uu, L_lu_T_A_hat_T = L_lu_T_A_hat_T, labeled_indices = labeled_indices,
+        A_error = A_error, RMSE_plot = RMSE_plot, A_gt = A_gt, title_0 = title_0)
 
     # Calculate RMSE and SAD
 
@@ -1719,3 +1782,45 @@ def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, ma
         print(f"Final Endmember SAD: {S_sad}")
 
     return A_final, S_GLU, A_rmse, S_sad
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def graph_plotter(i, A_error, RMSE_plot, A_error_array, RMSE_array, title_0):
+    x_iterations = [j for j in range(i)]
+
+    plots_to_show = []
+    if A_error:
+        plots_to_show.append(("A Error (||A_new - A||)", A_error_array))
+    if RMSE_plot:
+        plots_to_show.append(("RMSE vs Ground Truth", RMSE_array))
+
+    if plots_to_show:
+        fig, axes = plt.subplots(1, len(plots_to_show), figsize=(6*len(plots_to_show), 5))
+        if len(plots_to_show) == 1:
+            axes = [axes]  # make it indexable even with just one subplot
+
+        for ax, (title, data) in zip(axes, plots_to_show):
+            ax.plot(x_iterations, data)
+            ax.set_xlabel("Iterations")
+            ax.set_ylabel(title)
+            ax.set_title(title)
+
+        fig.suptitle(title_0, fontsize=16)
+        plt.tight_layout()
+        plt.show()
+
+    return
