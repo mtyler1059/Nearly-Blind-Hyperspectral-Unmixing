@@ -1452,6 +1452,8 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
     p, N = X.shape
     p, q = S.shape
     L = int(p / 2)
+    A_error_array = []
+    RMSE_array = []
     #A_0 = SCLSU(X, S)
     #print("Number of labeled points:", len(labeled_indices))
 
