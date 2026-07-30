@@ -468,7 +468,7 @@ def algo_2_glu(X, X_hat, A_hat, alpha=10.0, k=50):
 
 
 
-def algo_3_grsu(X, X_hat, A_hat, alpha, lam, gamma, rho, A_gt, max_iters=1000, eps=1e-3, k=50, A_error = False, RMSE_plot = False, title_0 = ""):
+def algo_3_grsu(X, X_hat, A_hat, alpha, lam, gamma, rho, A_gt, S_gt, max_iters=1000, eps=1e-3, k=50, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = ""):
     """
     Executes the Graph-Regularized Semi-Supervised Unmixing (GRSU) model (Algorithm 3).
 
@@ -492,6 +492,7 @@ def algo_3_grsu(X, X_hat, A_hat, alpha, lam, gamma, rho, A_gt, max_iters=1000, e
     q, M = A_hat.shape
     A_error_array = []
     RMSE_array = []
+    Energy_array = []
 
     # --- 1. Graph Construction & Laplacian Partitioning ---
     X_tilde = np.concatenate((X_hat, X), axis=1)
@@ -570,6 +571,9 @@ def algo_3_grsu(X, X_hat, A_hat, alpha, lam, gamma, rho, A_gt, max_iters=1000, e
             A_error_array.append(np.linalg.norm(A_new - A))
         if RMSE_plot:
             RMSE_array.append(RMSE(A, A_gt))
+        if Energy_plot:
+            Energy_array.append(GRSU_energy(X = X, S = S, A = A, W = W, M = M, 
+                                            X_hat = X_hat, A_hat = A_hat, alpha = alpha, lambda_0 = lam))
 
         S = S_new
         A = A_new
@@ -580,7 +584,8 @@ def algo_3_grsu(X, X_hat, A_hat, alpha, lam, gamma, rho, A_gt, max_iters=1000, e
         i += 1
     
     # Plot
-    graph_plotter(i, A_error, RMSE_plot, A_error_array, RMSE_array, title_0)
+    graph_plotter(i = i, A_error = A_error, RMSE_plot = RMSE_plot, Energy_plot = Energy_plot,
+                  A_error_array = A_error_array, RMSE_array = RMSE_array, Energy_array = Energy_array, title_0 = title_0) 
 
     return A, S
 
@@ -680,7 +685,7 @@ def algo_1_active_learning(X, W, m_initial=5, M_total=40, num_eigs=50, gamma=0.1
 
 
 
-def run_unmixing_pipeline_example(X, A_gt, S_gt, N, iters, alpha = 10.0, lam = 1.0, gamma = 1.0, rho = 1.0, m_0 = 2, print_bool = True, OH_labels = True, GRSU_bool = True, A_error = False, RMSE_plot = False, title_0 = "", prep = None):
+def run_unmixing_pipeline_example(X, A_gt, S_gt, N, iters, alpha = 10.0, lam = 1.0, gamma = 1.0, rho = 1.0, m_0 = 2, print_bool = True, OH_labels = True, GRSU_bool = True, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = "", prep = None):
     # ==========================================
     # Phase 0: Load Data (Mocking Jasper Ridge)
     # ==========================================
@@ -770,10 +775,12 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, iters, alpha = 10.0, lam = 1
             rho=rho,
             max_iters=iters,
             A_gt = A_gt,
+            S_gt = S_gt,
             eps=1e-3,
             k=int(N*0.005),
             A_error = A_error,
             RMSE_plot = RMSE_plot,
+            Energy_plot = Energy_plot,
             title_0 = title_0
         )
 
@@ -1279,7 +1286,7 @@ def algo_2_almm(X, S, alpha, beta, gamma, eta, maxIter):
 
 
 
-def algo_2_almm_optimized(X, S, A_gt, alpha, beta, gamma, eta, maxIter, A_error = False, RMSE_plot = False, title_0 = ""):
+def algo_2_almm_optimized(X, S, A_gt, alpha, beta, gamma, eta, maxIter, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = ""):
     """
     Optimized ALMM-Based SVDL.
     Note: Requires passing A_initial (from SCLSU) as an argument since 
@@ -1291,6 +1298,7 @@ def algo_2_almm_optimized(X, S, A_gt, alpha, beta, gamma, eta, maxIter, A_error 
     L = int(p / 2)
     A_error_array = []
     RMSE_array = []
+    Energy_array = []
 
     # 1. Precompute loop-invariant matrices
     StS = S.T @ S
@@ -1424,6 +1432,9 @@ def algo_2_almm_optimized(X, S, A_gt, alpha, beta, gamma, eta, maxIter, A_error 
 
                 rmse = RMSE(A_f_corrected, A_gt)  # Calculate RMSE
                 RMSE_array.append(rmse)
+            if Energy_plot:
+                Energy_array.append(ALMM_energy(X = X, S = S, A = A, T = t_diag, 
+                                                E = E, B = B, alpha = alpha, beta = beta, gamma = gamma, eta = eta))
 
             M = M_new
             B = B_new
@@ -1446,7 +1457,8 @@ def algo_2_almm_optimized(X, S, A_gt, alpha, beta, gamma, eta, maxIter, A_error 
     T_final = np.diag(t_diag)
 
     # Plot
-    graph_plotter(t, A_error, RMSE_plot, A_error_array, RMSE_array, title_0)
+    graph_plotter(i = t, A_error = A_error, RMSE_plot = RMSE_plot, Energy_plot = Energy_plot,
+                  A_error_array = A_error_array, RMSE_array = RMSE_array, Energy_array = Energy_array, title_0 = title_0) 
     
     return E, A, T_final, B
 
@@ -1494,7 +1506,7 @@ def half_threshold(z, alpha, xi):
 
 
 
-def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_0, L_uu, L_lu_T_A_hat_T, labeled_indices, A_error, RMSE_plot, A_gt, title_0):
+def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_0, L_uu, L_lu_T_A_hat_T, A_gt, A_hat, W, labeled_indices, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = ""):
     """
     Optimized ALMM-Based SVDL.
     Note: Requires passing A_initial (from SCLSU) as an argument since 
@@ -1502,9 +1514,12 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
     """
     p, N = X.shape
     p, q = S.shape
+    q, M_0 = A_hat.shape
+
     L = int(p / 2)
     A_error_array = []
     RMSE_array = []
+    Energy_array = []
     #A_0 = SCLSU(X, S)
     #print("Number of labeled points:", len(labeled_indices))
 
@@ -1711,6 +1726,10 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
 
                 rmse = RMSE(A_f_corrected, A_gt)  # Calculate RMSE
                 RMSE_array.append(rmse)
+            if Energy_plot:
+                Energy_array.append(Graph_ALMM_energy(X = X, S = S, A = A, A_hat = A_hat, 
+                                                      T = t_diag, E = E, B = B, W = W, M = M_0, 
+                                                      alpha = alpha, beta = beta, gamma = gamma, eta = eta, xi = xi))
 
             M = M_new
             B = B_new
@@ -1733,7 +1752,8 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
     T_final = np.diag(t_diag)
 
     # Plot
-    graph_plotter(t, A_error, RMSE_plot, A_error_array, RMSE_array, title_0)
+    graph_plotter(i = t, A_error = A_error, RMSE_plot = RMSE_plot, Energy_plot = Energy_plot,
+                  A_error_array = A_error_array, RMSE_array = RMSE_array, Energy_array = Energy_array, title_0 = title_0) 
     
     return E, A, T_final, B
 
@@ -1751,7 +1771,7 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
 
 
 
-def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, maxIter, M_total_0, m_0 = 2, xi_0 = 1e-3, OH_labels = True, print_bool = True, A_error = False, RMSE_plot = False, title_0 = ""):
+def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, maxIter, M_total_0, m_0 = 2, xi_0 = 1e-3, OH_labels = True, print_bool = True, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = ""):
 
     # ==========================================
     # Phase 1: Active Learning (Algorithm 1)
@@ -1786,9 +1806,11 @@ def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, ma
         A_hat_OH = generate_one_hot_labels(A_hat_exact)
         L_lu_T_A_hat_T = L_lu.T @ A_hat_OH.T
         label_title = "OH"
+        A_hat_test = A_hat_OH
     else:
         L_lu_T_A_hat_T = L_lu.T @ A_hat_exact.T
         label_title = "Exact"
+        A_hat_test = A_hat_exact
 
     # ==========================================
     # Phase 3: Semi-Supervised Unmixing
@@ -1799,21 +1821,18 @@ def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, ma
     # Note: The paper mentions an overlap between X_hat and X, but updates
     # the abundance map for all pixels in X anyway.
 
-    if OH_labels:
-        A_GLU, S_GLU = algo_2_glu(X, X_hat, A_hat_OH, alpha, k=int(N*0.005))
-    else:
-        A_GLU, S_GLU = algo_2_glu(X, X_hat, A_hat_exact, alpha, k=int(N*0.005))
+    A_GLU, S_GLU = algo_2_glu(X, X_hat, A_hat_test, alpha, k=int(N*0.005))
 
     # The second condition number is a lot worse than the first
     # print("Condition number of S_gt_chem.T @ S_gt_chem:", np.linalg.cond(S_gt_chem.T @ S_gt_chem))
     # print("Condition number of S_GLU.T @ S_GLU:", np.linalg.cond(S_GLU.T @ S_GLU))
 
     E_final, A_final, T_final, B_final = algo_2_graph_almm_optimized(
-        X, A_GLU, S_GLU, alpha = alpha, 
+        X = X, A_0 = A_GLU, S = S_GLU, alpha = alpha, 
         beta = beta, gamma = gamma, eta = eta, 
         maxIter = maxIter, xi_0 = xi_0, 
-        L_uu = L_uu, L_lu_T_A_hat_T = L_lu_T_A_hat_T, labeled_indices = labeled_indices,
-        A_error = A_error, RMSE_plot = RMSE_plot, A_gt = A_gt, title_0 = title_0)
+        L_uu = L_uu, L_lu_T_A_hat_T = L_lu_T_A_hat_T, A_gt = A_gt, A_hat = A_hat_test, W = W, labeled_indices = labeled_indices,
+        A_error = A_error, RMSE_plot = RMSE_plot, Energy_plot = Energy_plot, title_0 = title_0)
 
     # Calculate RMSE and SAD
 
@@ -1852,14 +1871,16 @@ def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, ma
 
 
 
-def graph_plotter(i, A_error, RMSE_plot, A_error_array, RMSE_array, title_0):
+def graph_plotter(i, A_error, RMSE_plot, Energy_plot, A_error_array, RMSE_array, Energy_array, title_0):
     x_iterations = [j for j in range(i)]
 
     plots_to_show = []
     if A_error:
         plots_to_show.append(("A Error (||A_new - A||)", A_error_array))
     if RMSE_plot:
-        plots_to_show.append(("RMSE vs Ground Truth", RMSE_array))
+        plots_to_show.append(("RMSE", RMSE_array))
+    if Energy_plot:
+        plots_to_show.append(("Energy", Energy_array))
 
     if plots_to_show:
         fig, axes = plt.subplots(1, len(plots_to_show), figsize=(6*len(plots_to_show), 5))
@@ -2236,4 +2257,132 @@ def abundance_plotting(X, A_gt, A_f_GLU, A_f_GRSU, A_f_ALMM, A_f_Graph_ALMM, tit
 
 
     
+def compute_I1_I2(A, A_hat, W, M):
+    W_uu = W[M:, M:] # unlabeled to unlabeled
+    W_ul = W[M:, :M] # unlabeled to labeled
     
+    A_sq = np.sum(A**2, axis=0)
+    dist_sq_uu = A_sq[:, None] + A_sq[None, :] - 2*(A.T @ A)
+    I1 = 0.25 * W_uu.multiply(dist_sq_uu).sum()
+    
+    Ahat_sq = np.sum(A_hat**2, axis=0)
+    dist_sq_ul = A_sq[:, None] + Ahat_sq[None, :] - 2*(A.T @ A_hat)
+    I2 = 0.25 * W_ul.multiply(dist_sq_ul).sum()
+    
+    return I1, I2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def GRSU_energy(X, S, A, W, M, X_hat, A_hat, alpha, lambda_0):
+    
+    # Least Squares Problem
+    term1 = 0.5 * (np.linalg.norm(X - (S @ A), 'fro') ** 2)
+
+    # Label information
+    term2 = ((alpha ** 2) / 2) * (np.linalg.norm(X_hat - (S @ A_hat), 'fro') ** 2)
+
+    # Graph regularization (I1 + I2, equivalent to the inner product)
+    I1, I2 = compute_I1_I2(A = A, A_hat = A_hat, W = W, M = M)
+
+    return term1 + term2 + (lambda_0 * I1) + (lambda_0 * I2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def ALMM_energy(X, S, A, T, E, B, alpha, beta, gamma, eta):
+
+    L = E.shape[1]
+    I_L = np.eye(L)
+
+    # Least Squares Problem
+    term1 = 0.5 * (np.linalg.norm(X - ((S @ A) * T) - (E @ B), 'fro') ** 2)
+
+    # Sparsity Regularization (L1)
+    term2 = alpha * np.linalg.norm(A, ord = 1)
+
+    # Generalization for Spectral Variability
+    term3 = (beta / 2) * (np.linalg.norm(B, 'fro') ** 2)
+
+    # Low-coherence with endmember dictionary and orthogonality
+    term4 = (gamma / 2) * (np.linalg.norm(S.T @ E) ** 2) + (eta / 2) * (np.linalg.norm(E.T @ E - I_L, 'fro') ** 2)
+
+    return term1 + term2 + term3 + term4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def Graph_ALMM_energy(X, S, A, A_hat, T, E, B, W, M, alpha, beta, gamma, eta, xi):
+
+    L = E.shape[1]
+    I_L = np.eye(L)
+
+    # Least Squares Problem
+    term1 = 0.5 * (np.linalg.norm(X - ((S @ A) * T) - (E @ B), 'fro') ** 2)
+
+    # Sparsity Regularization (L1/2)
+    term2 = alpha * np.sum(np.sqrt(np.abs(A)))
+
+    # Generalization for Spectral Variability
+    term3 = (beta / 2) * (np.linalg.norm(B, 'fro') ** 2)
+
+    # Low-coherence with endmember dictionary and orthogonality
+    term4 = (gamma / 2) * (np.linalg.norm(S.T @ E) ** 2) + (eta / 2) * (np.linalg.norm(E.T @ E - I_L, 'fro') ** 2)
+
+    # Graph Regularization Term
+    A_unlabeled = A[:, M:]
+    I1, I2 = compute_I1_I2(A = A_unlabeled, A_hat = A_hat, W = W, M = M)
+
+    return term1 + term2 + term3 + term4 + ((1/xi)*I1) + ((1/xi)*I2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
