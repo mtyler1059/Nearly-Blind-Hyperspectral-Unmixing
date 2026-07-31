@@ -1917,7 +1917,7 @@ def graph_plotter(i, A_error, RMSE_plot, Energy_plot, A_error_array, RMSE_array,
 
 
 
-def load_data(name, typename, sample = False):
+def load_data(name, typename, sample = False, print_bool = True):
 
     """
     Loads data into X, S, and A.
@@ -1947,7 +1947,8 @@ def load_data(name, typename, sample = False):
     data = np.load(name, allow_pickle = True).item()
 
     # 1. See what keys are inside
-    print("Keys in the dataset:", data.keys())
+    if print_bool:
+        print("Keys in the dataset:", data.keys())
 
     # Grabbing X, S, and A from the file
     if typename != 'HSI':
@@ -1957,28 +1958,31 @@ def load_data(name, typename, sample = False):
 
     # Printing the shape based on typename
     if typename == 'chem':
-        # 2. Inspect the exact shapes of the arrays
-        print("Shape of X (Chemistry Sample):", data['X'].shape)
-        print("Shape of A_gt (Abundance Map):", data['A_gt'].shape)
-        print("Shape of S_gt (Endmember Spectra):", data['S_gt'].shape)
+        if print_bool:
+            # 2. Inspect the exact shapes of the arrays
+            print("Shape of X (Chemistry Sample):", data['X'].shape)
+            print("Shape of A_gt (Abundance Map):", data['A_gt'].shape)
+            print("Shape of S_gt (Endmember Spectra):", data['S_gt'].shape)
 
-        # 3. (Optional) Look at a small slice of the actual numbers
-        print("\nFirst chemical's concentration in X (how much of class 1?):\n", data['X'][0, 0])
+            # 3. (Optional) Look at a small slice of the actual numbers
+            print("\nFirst chemical's concentration in X (how much of class 1?):\n", data['X'][0, 0])
 
     elif typename == 'nonlinear':
+        if print_bool:
         # 2. Inspect the exact shapes of the arrays
-        print("Shape of X (HSI Image):", data['X'].shape)
-        print("Shape of A_gt (Abundance Map):", data['A_gt'].shape)
-        print("Shape of S_gt (Endmember Spectra):", data['S_gt'].shape)
+            print("Shape of X (HSI Image):", data['X'].shape)
+            print("Shape of A_gt (Abundance Map):", data['A_gt'].shape)
+            print("Shape of S_gt (Endmember Spectra):", data['S_gt'].shape)
 
-        # 3. (Optional) Look at a small slice of the actual numbers
-        print("\nFirst pixel's spectra in X:\n", data['X'][0, 0, :])
+            # 3. (Optional) Look at a small slice of the actual numbers
+            print("\nFirst pixel's spectra in X:\n", data['X'][0, 0, :])
 
         # Reshaping X from spatial image (10, 1000, 30) to 2D image (30, 10000)
         H, W, p = X_gt.shape  # H=10, W=1000, p=30
         X_gt_flat = X_gt.reshape(-1, p).T  # reshape to (p, N) = (30, 10000)
 
-        print(X_gt_flat.shape)  # should print (30, 2500)
+        if print_bool:
+            print(X_gt_flat.shape)  # should print (30, 2500)
 
     elif typename == 'HSI':
         A_gt = data['A']
@@ -1988,40 +1992,44 @@ def load_data(name, typename, sample = False):
         S_gt_HSI = S_gt['S_ref']
         A_gt_HSI = A_gt['A_ref']
 
-        # 1. Let's check X just to be sure it IS an array
-        print("Type of X:", type(data['X']))
-        if hasattr(data['X'], 'shape'):
-            print("Shape of X:", data['X'].shape)
+        if print_bool:
+            # 1. Let's check X just to be sure it IS an array
+            print("Type of X:", type(data['X']))
+            if hasattr(data['X'], 'shape'):
+                print("Shape of X:", data['X'].shape)
 
-        # 2. Let's peek inside the dictionary 'A'
-        print("\nType of A:", type(data['A']))
-        if isinstance(data['A'], dict):
-            print("Keys inside A:", data['A'].keys())
+            # 2. Let's peek inside the dictionary 'A'
+            print("\nType of A:", type(data['A']))
+            if isinstance(data['A'], dict):
+                print("Keys inside A:", data['A'].keys())
 
-        # 3. Let's peek inside the dictionary 'S'
-        print("\nType of S:", type(data['S']))
-        if isinstance(data['S'], dict):
-            print("Keys inside S:", data['S'].keys())
+            # 3. Let's peek inside the dictionary 'S'
+            print("\nType of S:", type(data['S']))
+            if isinstance(data['S'], dict):
+                print("Keys inside S:", data['S'].keys())
 
 
     # Printing the shapes
-    if typename == 'chem' or typename == 'nonlinear':  
-        # Checking the shapes
-        print(type(S_gt))
-        print(S_gt.shape)
-        print(S_gt.dtype)
+    if typename == 'chem' or typename == 'nonlinear': 
+        if print_bool: 
+            # Checking the shapes
+            print(type(S_gt))
+            print(S_gt.shape)
+            print(S_gt.dtype)
 
-        print(type(A_gt ))
-        print(A_gt .shape)
-        print(A_gt .dtype)
+            print(type(A_gt ))
+            print(A_gt .shape)
+            print(A_gt .dtype)
 
     # Returning X, S, and A
     if typename == 'chem':
-        print("Shape of X:", X_gt.shape)
+        if print_bool:
+            print("Shape of X:", X_gt.shape)
         return X_gt, S_gt, A_gt 
     
     elif typename == 'nonlinear':
-        print("Shape of X:", X_gt_flat.shape)
+        if print_bool:
+            print("Shape of X:", X_gt_flat.shape)
         return X_gt, S_gt, A_gt 
     elif typename == 'HSI':
 
@@ -2036,7 +2044,8 @@ def load_data(name, typename, sample = False):
             X_HSI_img = X_gt.T.reshape(H, W, -1)  # reshape to (307, 307, p)
             patch = X_HSI_img[row_start:row_start+patch_size, col_start:col_start+patch_size, :]
             X_HSI_test = patch.reshape(-1, patch.shape[-1]).T  # back to (p, N_patch)
-            print("X (reshaped):", X_HSI_test.shape)
+            if print_bool:
+                print("X (reshaped):", X_HSI_test.shape)
 
             A_gt_HSI_img = A_gt_HSI.T.reshape(H, W, -1)
             patch_gt_HSI = A_gt_HSI_img[row_start:row_start+patch_size, col_start:col_start+patch_size, :]
@@ -2152,7 +2161,7 @@ def best_param_graph_almm(X, A_gt, S_gt, N, maxIter, alpha_0, beta_0, gamma_0, e
     # Create a list of each combination
     alpha = [alpha_0, alpha_0/10, alpha_0/100, alpha_0/1000, alpha_0/10000]
     M_total = [j * (N * 0.004) for j in range(1, 5)]
-    xi = [10**i for i in range(0, -5, -1)]
+    xi = [10**i for i in range(2, -5, -1)]
     OH_labels = [True, False]
 
     combos = list(product(alpha, M_total, xi, OH_labels))
