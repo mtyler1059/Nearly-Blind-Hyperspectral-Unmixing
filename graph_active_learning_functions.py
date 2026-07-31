@@ -1819,7 +1819,7 @@ def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, ma
     # Phase 3: Semi-Supervised Unmixing
     # ==========================================
     if print_bool:
-        print(f"Running ALMM (and GLU) Unmixing on {label_title}...")
+        print(f"Running Graph ALMM Unmixing on {label_title}...")
 
     # Note: The paper mentions an overlap between X_hat and X, but updates
     # the abundance map for all pixels in X anyway.
