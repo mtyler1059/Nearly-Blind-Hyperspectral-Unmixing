@@ -2106,7 +2106,7 @@ def synthetic_linear_data(samples, channels):
 
 
 
-def min_RMSE(X, S, A, N, maxIter, alpha, beta, gamma, eta, M_total_0, m_0, xi_0, OH_labels, W_0 = None):
+def min_RMSE_graph_almm(X, S, A, N, maxIter, alpha, beta, gamma, eta, M_total_0, m_0, xi_0, OH_labels, W_0 = None):
     """
     Returns the RMSE of Graph ALMM (S_sad is assumed to be constant here).
     """
@@ -2168,7 +2168,7 @@ def best_param_graph_almm(X, A_gt, S_gt, N, maxIter, alpha_0, beta_0, gamma_0, e
 
     # Run the function using combinations
     results = Parallel(n_jobs =-1)(
-        delayed(min_RMSE)(X = X, S = S_gt, A = A_gt, 
+        delayed(min_RMSE_graph_almm)(X = X, S = S_gt, A = A_gt, 
                         N = N, alpha = alpha_0, beta = beta_0, gamma = gamma_0, eta = eta_0, maxIter = maxIter, 
                         M_total_0 = M_total_0, m_0 = m_0, xi_0 = xi_0, 
                         OH_labels = label, W_0 = W) for alpha_0, M_total_0, xi_0, label in combos)
@@ -2198,7 +2198,7 @@ def best_param_graph_almm(X, A_gt, S_gt, N, maxIter, alpha_0, beta_0, gamma_0, e
     print(f"Best alpha: {alpha_best}")
     print(f"Best M_total: {M_total_best}")
     print(f"Best xi: {xi_best}")
-    print(f"Best OH label: {label_title}")
+    print(f"Best label: {label_title}")
 
     return [alpha_best, M_total_best, xi_best, OH_labels_best]
 
@@ -2297,6 +2297,108 @@ def best_alpha_ALMM(X, S, A, iters_param, iters_final, alpha_0 = (1e-3 + 1e-2)/2
 
     return E_f, A_f, T_f, B_f
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def min_RMSE_ALMM(X, S, A, maxIter, alpha, beta, gamma, eta):
+    """
+    Returns the RMSE of Graph ALMM (S_sad is assumed to be constant here).
+    """
+    E_f, A_f, T_f, B_f = algo_2_almm_optimized(X = X, S = S, A_gt = A, 
+                                                    alpha = alpha, beta = beta, gamma = gamma, eta = eta, 
+                                                    maxIter = maxIter)
+
+    # Check for labeling issues
+    corr = np.corrcoef(A_f[0], A[0])[0, 1]
+    if corr < 0:
+        A_f_corrected = 1 - A_f
+    else:
+        A_f_corrected = A_f
+
+    A_rmse = RMSE(A_f_corrected, A)  # Calculate RMSE
+
+    return A_rmse
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def best_param_almm(X, A_gt, S_gt, maxIter, alpha_0, beta_0, gamma_0, eta_0):
+    """
+    Performs grid search on some regularization parameters (alpha, beta, xi, OH vs. Exact) to find
+    the optimal combination of the four, minimizing the sum A_RMSE + S_SAD.
+
+    Parameters:
+    alpha (numpy.ndarray): [alpha_0, alpha_0/10, alpha_0/100, alpha_0/1000, alpha_0/10000]
+    beta (numpy.ndarray): [beta_0, beta_0/10, beta_0/100, beta_0/1000, beta_0/10000]
+    gamma (numpy.ndarray): [gamma_0, gamma_0/10, gamma_0/100, gamma_0/1000, gamma_0/10000]
+    eta (numpy.ndarray): [eta_0, eta_0/10, eta_0/100, eta_0/1000, eta_0/10000]
+
+
+    Returns:
+    best (numpy.ndarray): An array with best combination minimizing A_RMSE + S_SAD
+    in the format [alpha, beta, gamma, eta].
+    """
+
+    # Create a list of each combination
+    alpha = [alpha_0, alpha_0/10, alpha_0/100, alpha_0/1000, alpha_0/10000]
+    beta = [beta_0, beta_0/10, beta_0/100, beta_0/1000, beta_0/10000]
+    gamma = [gamma_0, gamma_0/10, gamma_0/100, gamma_0/1000, gamma_0/10000]
+    eta = [eta_0, eta_0/10, eta_0/100, eta_0/1000, eta_0/10000]
+
+    combos = list(product(alpha, beta, gamma, eta))
+
+    # Run the function using combinations
+    results = Parallel(n_jobs =-1)(
+        delayed(min_RMSE_ALMM)(X = X, S = S_gt, A = A_gt, 
+                        alpha = a, beta = b, gamma = g, eta = e, maxIter = maxIter) 
+                        for a, b, g, e in combos)
+
+    # Create a 4D array to match the set order
+    results = np.array(results).reshape(len(alpha), len(beta), len(gamma), len(eta))
+
+    # Find min sum value and the corresponding combination
+    idx = np.unravel_index(results.argmin(), results.shape)
+    min_result = results[idx]
+    alpha_idx, beta_idx, gamma_idx, eta_idx = idx
+
+    # Save the best values
+    alpha_best = alpha[alpha_idx]
+    beta_best = beta[beta_idx]
+    gamma_best = gamma[gamma_idx]
+    eta_best = eta[eta_idx]
+
+    # Print the best values
+    print(f"Best RMSE: {min_result}")
+    print(f"Best alpha: {alpha_best}")
+    print(f"Best beta: {beta_best}")
+    print(f"Best gamma: {gamma_best}")
+    print(f"Best eta: {eta_best}")
+
+    return [alpha_best, beta_best, gamma_best, eta_best]
 
 
 
