@@ -1771,17 +1771,20 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
 
 
 
-def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, maxIter, M_total_0, m_0 = 2, xi_0 = 1e-3, OH_labels = True, print_bool = True, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = ""):
+def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, maxIter, M_total_0, m_0 = 2, xi_0 = 1e-3, OH_labels = True, print_bool = True, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = "", W_0 = None):
 
     # ==========================================
     # Phase 1: Active Learning (Algorithm 1)
     # ==========================================
 
-    if print_bool:
-        print("Building initial graph for Active Learning...")
-    # Scikit-learn expects (samples, features), so we pass X.T
-    # K = 50 was picked for a 10000 pixel image, so roughly 0.5%
-    G, W = build_custom_knn_graph(X.T, K=int(N*0.005))
+    if W_0 is None:
+        if print_bool:
+            print("Building initial graph for Active Learning...")
+        # Scikit-learn expects (samples, features), so we pass X.T
+        # K = 50 was picked for a 10000 pixel image, so roughly 0.5%
+        G, W = build_custom_knn_graph(X.T, K=int(N*0.005))
+    else:
+        W = W_0
 
     if print_bool:
         print("Running Active Learning...")
@@ -2089,6 +2092,117 @@ def synthetic_linear_data(samples, channels):
     X=X+E
 
     return X, S, A
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def min_RMSE(X, S, A, N, maxIter, alpha, beta, gamma, eta, M_total_0, m_0, xi_0, OH_labels, W_0 = None):
+    """
+    Returns the RMSE of Graph ALMM (S_sad is assumed to be constant here).
+    """
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example2(X = X, A_gt = A, S_gt = S, 
+                                                             N = N, alpha = alpha, beta = beta, gamma = gamma, eta = eta, maxIter = maxIter, 
+                                                             M_total_0 = M_total_0, m_0 = m_0, xi_0 = xi_0, 
+                                                             OH_labels = OH_labels, print_bool = False, 
+                                                             A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = "", W_0 = W_0)
+    
+    return A_rmse
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def best_param_graph_almm(X, A_gt, S_gt, N, maxIter, alpha_0, beta_0, gamma_0, eta_0, m_0):
+    """
+    Performs grid search on some regularization parameters (alpha, M_total, xi, OH vs. Exact) to find
+    the optimal combination of the four, minimizing the sum A_RMSE + S_SAD.
+
+    Parameters:
+    alpha_0 (numpy.ndarray): [alpha_0, alpha_0/10, alpha_0/100, alpha_0/1000, alpha_0/10000]
+    M_total (numpy.ndarray): [j * (N * 0.004) for j in range(1, 5)]
+
+
+    Returns:
+    best (numpy.ndarray): An array with best combination minimizing A_RMSE + S_SAD
+    in the format [alpha, lam, gamma, rho].
+    """
+
+    # Create a list of each combination
+    alpha = [alpha_0, alpha_0/10, alpha_0/100, alpha_0/1000, alpha_0/10000]
+    M_total = [j * (N * 0.004) for j in range(1, 5)]
+    xi = [10**i for i in range(0, -5, -1)]
+    OH_labels = [True, False]
+
+    combos = list(product(alpha, M_total, xi, OH_labels))
+
+    # Precompute the graph
+
+    # ==========================================
+    # Phase 1: Active Learning (Algorithm 1)
+    # ==========================================
+    # Scikit-learn expects (samples, features), so we pass X.T
+    # K = 50 was picked for a 10000 pixel image, so roughly 0.5%
+    G, W = build_custom_knn_graph(X.T, K=int(N*0.005))
+
+    # Run the function using combinations
+    results = Parallel(n_jobs =-1)(
+        delayed(min_RMSE)(X = X, S = S_gt, A = A_gt, 
+                        N = N, alpha = alpha_0, beta = beta_0, gamma = gamma_0, eta = eta_0, maxIter = maxIter, 
+                        M_total_0 = M_total_0, m_0 = m_0, xi_0 = xi_0, 
+                        OH_labels = label, W_0 = W) for alpha_0, M_total_0, xi_0, label in combos)
+
+    # Create a 4D array to match the set order
+    results = np.array(results).reshape(len(alpha), len(M_total), len(xi), len(OH_labels))
+
+    # Find min sum value and the corresponding combination
+    idx = np.unravel_index(results.argmin(), results.shape)
+    min_result = results[idx]
+    alpha_idx, M_total_idx, xi_idx, OH_labels_idx = idx
+
+    # Save the best values
+    alpha_best = alpha[alpha_idx]
+    M_total_best = M_total[M_total_idx]
+    xi_best = xi[xi_idx]
+    OH_labels_best = OH_labels[OH_labels_idx]
+
+    # changing label title for readability
+    if OH_labels_best == True:
+        label_title = "OH"
+    else:
+        label_title = "Exact"
+
+    # Print the best values
+    print(f"Best RMSE: {min_result}")
+    print(f"Best alpha: {alpha_best}")
+    print(f"Best M_total: {M_total_best}")
+    print(f"Best xi: {xi_best}")
+    print(f"Best OH label: {label_title}")
+
+    return [alpha_best, M_total_best, xi_best, OH_labels_best]
+
+
 
 
 
