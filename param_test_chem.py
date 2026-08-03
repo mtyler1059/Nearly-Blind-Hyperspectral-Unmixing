@@ -1,3 +1,10 @@
+# Maintain consistency
+import os
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
+
 # Import necessary packages and libraries
 import numpy as np
 import pandas as pd
@@ -64,17 +71,43 @@ if __name__ == "__main__":
     print("\n\nGLU (OH)")
     print("==========")
 
-    parameter_testing(X = X_chem_CuSO4, A_gt = A_gt_chem_CuSO4, S_gt = S_gt_chem_CuSO4, N = samples, 
+    params_GLU_OH_CuSO4 = parameter_testing(X = X_chem_CuSO4, A_gt = A_gt_chem_CuSO4, S_gt = S_gt_chem_CuSO4, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = False, OH_labels = True)
+    
+    alpha_1 = params_GLU_OH_CuSO4[0]
+    lam_1 = params_GLU_OH_CuSO4[1]
+    gamma_1 = params_GLU_OH_CuSO4[2]
+    rho_1 = params_GLU_OH_CuSO4[3]
+
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_CuSO4, A_gt = A_gt_chem_CuSO4, S_gt = S_gt_chem_CuSO4, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = True, GRSU_bool = False, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+    
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
     
     print("\nGLU (Exact)")
     print("==========")
 
-    parameter_testing(X = X_chem_CuSO4, A_gt = A_gt_chem_CuSO4, S_gt = S_gt_chem_CuSO4, N = samples, 
+    params_GLU_exact_CuSO4 = parameter_testing(X = X_chem_CuSO4, A_gt = A_gt_chem_CuSO4, S_gt = S_gt_chem_CuSO4, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = False, OH_labels = False)
     
+    alpha_1 = params_GLU_exact_CuSO4[0]
+    lam_1 = params_GLU_exact_CuSO4[1]
+    gamma_1 = params_GLU_exact_CuSO4[2]
+    rho_1 = params_GLU_exact_CuSO4[3]
+    
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_CuSO4, A_gt = A_gt_chem_CuSO4, S_gt = S_gt_chem_CuSO4, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = False, GRSU_bool = False, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
+
 
 
     ### GRSU
@@ -82,17 +115,43 @@ if __name__ == "__main__":
     print("\n\nGRSU (OH)")
     print("==========")
 
-    parameter_testing(X = X_chem_CuSO4, A_gt = A_gt_chem_CuSO4, S_gt = S_gt_chem_CuSO4, N = samples, 
+    params_GRSU_OH_CuSO4 = parameter_testing(X = X_chem_CuSO4, A_gt = A_gt_chem_CuSO4, S_gt = S_gt_chem_CuSO4, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = True, OH_labels = True)
+    
+    alpha_1 = params_GRSU_OH_CuSO4[0]
+    lam_1 = params_GRSU_OH_CuSO4[1]
+    gamma_1 = params_GRSU_OH_CuSO4[2]
+    rho_1 = params_GRSU_OH_CuSO4[3]
+
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_CuSO4, A_gt = A_gt_chem_CuSO4, S_gt = S_gt_chem_CuSO4, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = True, GRSU_bool = True, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+    
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
     
     print("\nGRSU (Exact)")
     print("==========")
 
-    parameter_testing(X = X_chem_CuSO4, A_gt = A_gt_chem_CuSO4, S_gt = S_gt_chem_CuSO4, N = samples, 
+    params_GRSU_exact_CuSO4 = parameter_testing(X = X_chem_CuSO4, A_gt = A_gt_chem_CuSO4, S_gt = S_gt_chem_CuSO4, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = True, OH_labels = False)
     
+    alpha_1 = params_GRSU_exact_CuSO4[0]
+    lam_1 = params_GRSU_exact_CuSO4[1]
+    gamma_1 = params_GRSU_exact_CuSO4[2]
+    rho_1 = params_GRSU_exact_CuSO4[3]
+    
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_CuSO4, A_gt = A_gt_chem_CuSO4, S_gt = S_gt_chem_CuSO4, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = False, GRSU_bool = True, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
+
 
 
     ### ALMM
@@ -134,34 +193,84 @@ if __name__ == "__main__":
     print("\n\nGLU (OH)")
     print("==========")
 
-    parameter_testing(X = X_chem_FeCl3, A_gt = A_gt_chem_FeCl3, S_gt = S_gt_chem_FeCl3, N = samples, 
+    params_GLU_OH_FeCl3 = parameter_testing(X = X_chem_FeCl3, A_gt = A_gt_chem_FeCl3, S_gt = S_gt_chem_FeCl3, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = False, OH_labels = True)
     
+    alpha_1 = params_GLU_OH_FeCl3[0]
+    lam_1 = params_GLU_OH_FeCl3[1]
+    gamma_1 = params_GLU_OH_FeCl3[2]
+    rho_1 = params_GLU_OH_FeCl3[3]
+
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_FeCl3, A_gt = A_gt_chem_FeCl3, S_gt = S_gt_chem_FeCl3, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = True, GRSU_bool = False, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+    
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
+
     print("\nGLU (Exact)")
     print("==========")
 
-    parameter_testing(X = X_chem_FeCl3, A_gt = A_gt_chem_FeCl3, S_gt = S_gt_chem_FeCl3, N = samples, 
+    params_GLU_exact_FeCl3 = parameter_testing(X = X_chem_FeCl3, A_gt = A_gt_chem_FeCl3, S_gt = S_gt_chem_FeCl3, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = False, OH_labels = False)
     
+    alpha_1 = params_GLU_exact_FeCl3[0]
+    lam_1 = params_GLU_exact_FeCl3[1]
+    gamma_1 = params_GLU_exact_FeCl3[2]
+    rho_1 = params_GLU_exact_FeCl3[3]
+    
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_FeCl3, A_gt = A_gt_chem_FeCl3, S_gt = S_gt_chem_FeCl3, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = False, GRSU_bool = False, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
 
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
 
     ### GRSU
 
     print("\n\nGRSU (OH)")
     print("==========")
 
-    parameter_testing(X = X_chem_FeCl3, A_gt = A_gt_chem_FeCl3, S_gt = S_gt_chem_FeCl3, N = samples, 
+    params_GRSU_OH_FeCl3 = parameter_testing(X = X_chem_FeCl3, A_gt = A_gt_chem_FeCl3, S_gt = S_gt_chem_FeCl3, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = True, OH_labels = True)
+    
+    alpha_1 = params_GRSU_OH_FeCl3[0]
+    lam_1 = params_GRSU_OH_FeCl3[1]
+    gamma_1 = params_GRSU_OH_FeCl3[2]
+    rho_1 = params_GRSU_OH_FeCl3[3]
+
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_FeCl3, A_gt = A_gt_chem_FeCl3, S_gt = S_gt_chem_FeCl3, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = True, GRSU_bool = True, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+    
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
     
     print("\nGRSU (Exact)")
     print("==========")
 
-    parameter_testing(X = X_chem_FeCl3, A_gt = A_gt_chem_FeCl3, S_gt = S_gt_chem_FeCl3, N = samples, 
+    params_GRSU_exact_FeCl3 = parameter_testing(X = X_chem_FeCl3, A_gt = A_gt_chem_FeCl3, S_gt = S_gt_chem_FeCl3, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = True, OH_labels = False)
+    
+    alpha_1 = params_GRSU_exact_FeCl3[0]
+    lam_1 = params_GRSU_exact_FeCl3[1]
+    gamma_1 = params_GRSU_exact_FeCl3[2]
+    rho_1 = params_GRSU_exact_FeCl3[3]
+    
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_FeCl3, A_gt = A_gt_chem_FeCl3, S_gt = S_gt_chem_FeCl3, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = False, GRSU_bool = True, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
     
 
 
@@ -198,41 +307,107 @@ if __name__ == "__main__":
     #print(f"X: {X_chem_FeSO4.shape} \n S: {S_gt_chem_FeSO4.shape} \n A: {A_gt_chem_FeSO4.shape}")
 
 
+    ### Checking issue with stuff
+
+    # Generating prep
+    G, W = build_custom_knn_graph(X_chem_FeSO4.T, K=int(1000*0.005))
+    labeled_indices = algo_1_active_learning(X_chem_FeSO4, W, m_initial=2, M_total=int(0.004*1000), num_eigs=int(1000*0.005))
+    X_hat = X_chem_FeSO4[:, labeled_indices]
+    A_hat_exact = A_gt_chem_FeSO4[:, labeled_indices]
+    A_hat_OH = generate_one_hot_labels(A_hat_exact)
+    prep = [X_hat, A_hat_OH, "OH"]
+
+    print("Running consistency check (expect ~14)...")
+    _check = Parallel(n_jobs=-1)(delayed(sum_RMSE_SAD)(
+        X_chem_FeSO4, A_gt_chem_FeSO4, S_gt_chem_FeSO4, 1000, iters, 100.0, 1.0, 0.01, 0.01, 2,
+        print_bool=False, OH_labels=True, GRSU_bool=False, prep=prep
+    ) for _ in range(1))
+    print(f"Sanity check result: {_check[0]}")
 
     ### GLU
 
     print("\n\nGLU (OH)")
     print("==========")
 
-    parameter_testing(X = X_chem_FeSO4, A_gt = A_gt_chem_FeSO4, S_gt = S_gt_chem_FeSO4, N = samples, 
+    params_GLU_OH_FeSO4 = parameter_testing(X = X_chem_FeSO4, A_gt = A_gt_chem_FeSO4, S_gt = S_gt_chem_FeSO4, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = False, OH_labels = True)
+    
+    alpha_1 = params_GLU_OH_FeSO4[0]
+    lam_1 = params_GLU_OH_FeSO4[1]
+    gamma_1 = params_GLU_OH_FeSO4[2]
+    rho_1 = params_GLU_OH_FeSO4[3]
+
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_FeSO4, A_gt = A_gt_chem_FeSO4, S_gt = S_gt_chem_FeSO4, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = True, GRSU_bool = False, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+    
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
     
     print("\nGLU (Exact)")
     print("==========")
 
-    parameter_testing(X = X_chem_FeSO4, A_gt = A_gt_chem_FeSO4, S_gt = S_gt_chem_FeSO4, N = samples, 
+    params_GLU_exact_FeSO4 = parameter_testing(X = X_chem_FeSO4, A_gt = A_gt_chem_FeSO4, S_gt = S_gt_chem_FeSO4, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = False, OH_labels = False)
     
+    alpha_1 = params_GLU_exact_FeSO4[0]
+    lam_1 = params_GLU_exact_FeSO4[1]
+    gamma_1 = params_GLU_exact_FeSO4[2]
+    rho_1 = params_GLU_exact_FeSO4[3]
 
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_FeSO4, A_gt = A_gt_chem_FeSO4, S_gt = S_gt_chem_FeSO4, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = False, GRSU_bool = False, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+    
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
 
     ### GRSU
 
     print("\n\nGRSU (OH)")
     print("==========")
 
-    parameter_testing(X = X_chem_FeSO4, A_gt = A_gt_chem_FeSO4, S_gt = S_gt_chem_FeSO4, N = samples, 
+    params_GRSU_OH_FeSO4 = parameter_testing(X = X_chem_FeSO4, A_gt = A_gt_chem_FeSO4, S_gt = S_gt_chem_FeSO4, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = True, OH_labels = True)
+    
+    alpha_1 = params_GRSU_OH_FeSO4[0]
+    lam_1 = params_GRSU_OH_FeSO4[1]
+    gamma_1 = params_GRSU_OH_FeSO4[2]
+    rho_1 = params_GRSU_OH_FeSO4[3]
+
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_FeSO4, A_gt = A_gt_chem_FeSO4, S_gt = S_gt_chem_FeSO4, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = True, GRSU_bool = True, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+    
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
     
     print("\nGRSU (Exact)")
     print("==========")
 
-    parameter_testing(X = X_chem_FeSO4, A_gt = A_gt_chem_FeSO4, S_gt = S_gt_chem_FeSO4, N = samples, 
+    params_GRSU_exact_FeSO4 = parameter_testing(X = X_chem_FeSO4, A_gt = A_gt_chem_FeSO4, S_gt = S_gt_chem_FeSO4, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = True, OH_labels = False)
     
+    alpha_1 = params_GRSU_exact_FeSO4[0]
+    lam_1 = params_GRSU_exact_FeSO4[1]
+    gamma_1 = params_GRSU_exact_FeSO4[2]
+    rho_1 = params_GRSU_exact_FeSO4[3]
+
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_FeSO4, A_gt = A_gt_chem_FeSO4, S_gt = S_gt_chem_FeSO4, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = False, GRSU_bool = True, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+    
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
+
 
 
     ### ALMM
@@ -274,35 +449,85 @@ if __name__ == "__main__":
     print("\n\nGLU (OH)")
     print("==========")
 
-    parameter_testing(X = X_chem_CuSO4_exp, A_gt = A_gt_chem_CuSO4_exp, S_gt = S_gt_chem_CuSO4_exp, N = samples, 
+    params_GLU_OH_CuSO4_exp = parameter_testing(X = X_chem_CuSO4_exp, A_gt = A_gt_chem_CuSO4_exp, S_gt = S_gt_chem_CuSO4_exp, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = False, OH_labels = True)
+    
+    alpha_1 = params_GLU_OH_CuSO4_exp[0]
+    lam_1 = params_GLU_OH_CuSO4_exp[1]
+    gamma_1 = params_GLU_OH_CuSO4_exp[2]
+    rho_1 = params_GLU_OH_CuSO4_exp[3]
+
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_CuSO4_exp, A_gt = A_gt_chem_CuSO4_exp, S_gt = S_gt_chem_CuSO4_exp, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = True, GRSU_bool = False, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+    
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
     
     print("\nGLU (Exact)")
     print("==========")
 
-    parameter_testing(X = X_chem_CuSO4_exp, A_gt = A_gt_chem_CuSO4_exp, S_gt = S_gt_chem_CuSO4_exp, N = samples, 
+    params_GLU_exact_CuSO4_exp = parameter_testing(X = X_chem_CuSO4_exp, A_gt = A_gt_chem_CuSO4_exp, S_gt = S_gt_chem_CuSO4_exp, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = False, OH_labels = False)
     
+    alpha_1 = params_GLU_exact_CuSO4_exp[0]
+    lam_1 = params_GLU_exact_CuSO4_exp[1]
+    gamma_1 = params_GLU_exact_CuSO4_exp[2]
+    rho_1 = params_GLU_exact_CuSO4_exp[3]
 
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_CuSO4_exp, A_gt = A_gt_chem_CuSO4_exp, S_gt = S_gt_chem_CuSO4_exp, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = False, GRSU_bool = False, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+    
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
 
     ### GRSU
 
     print("\n\nGRSU (OH)")
     print("==========")
 
-    parameter_testing(X = X_chem_CuSO4_exp, A_gt = A_gt_chem_CuSO4_exp, S_gt = S_gt_chem_CuSO4_exp, N = samples, 
+    params_GRSU_OH_CuSO4_exp = parameter_testing(X = X_chem_CuSO4_exp, A_gt = A_gt_chem_CuSO4_exp, S_gt = S_gt_chem_CuSO4_exp, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = True, OH_labels = True)
+    
+    alpha_1 = params_GRSU_OH_CuSO4_exp[0]
+    lam_1 = params_GRSU_OH_CuSO4_exp[1]
+    gamma_1 = params_GRSU_OH_CuSO4_exp[2]
+    rho_1 = params_GRSU_OH_CuSO4_exp[3]
+
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_CuSO4_exp, A_gt = A_gt_chem_CuSO4_exp, S_gt = S_gt_chem_CuSO4_exp, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = True, GRSU_bool = True, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+    
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
     
     print("\nGRSU (Exact)")
     print("==========")
 
-    parameter_testing(X = X_chem_CuSO4_exp, A_gt = A_gt_chem_CuSO4_exp, S_gt = S_gt_chem_CuSO4_exp, N = samples, 
+    params_GRSU_exact_CuSO4_exp = parameter_testing(X = X_chem_CuSO4_exp, A_gt = A_gt_chem_CuSO4_exp, S_gt = S_gt_chem_CuSO4_exp, N = samples, 
                   iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
                   print_bool = False, GRSU_bool = True, OH_labels = False)
     
+    alpha_1 = params_GRSU_exact_CuSO4_exp[0]
+    lam_1 = params_GRSU_exact_CuSO4_exp[1]
+    gamma_1 = params_GRSU_exact_CuSO4_exp[2]
+    rho_1 = params_GRSU_exact_CuSO4_exp[3]
+
+    # Run algorithm on chosen parameters
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_chem_CuSO4_exp, A_gt = A_gt_chem_CuSO4_exp, S_gt = S_gt_chem_CuSO4_exp, N = samples, iters = iters, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    print_bool = False, OH_labels = False, GRSU_bool = True, 
+                                                                                                    A_error = False, RMSE_plot = False, title_0 = "")
+    
+    print(f"RMSE: {A_rmse}\n SAD: {S_sad}")
+
 
 
     ### ALMM
