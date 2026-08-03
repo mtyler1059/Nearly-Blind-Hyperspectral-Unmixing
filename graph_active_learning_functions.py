@@ -718,6 +718,8 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, iters, alpha = 10.0, lam = 1
         # num_eigs = 0.5% of the pixels (equal to K)?
         labeled_indices = algo_1_active_learning(X, W, m_initial=m_0, M_total=int(0.004*N), num_eigs=int(N*0.005))
 
+        print("Labeled indices:", labeled_indices)
+
         # ==========================================
         # Phase 2: Extract Training Data
         # ==========================================
