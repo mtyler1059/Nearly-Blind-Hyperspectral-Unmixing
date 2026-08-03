@@ -635,7 +635,9 @@ def algo_1_active_learning(X, W, m_initial=5, M_total=40, num_eigs=50, gamma=0.1
     # 2. Compute truncated eigen-decomposition of L
     # We want the smallest algebraic eigenvalues ('SA' or 'SM')
     # Use shift-invert mode (sigma=0) to reliably find eigenvalues near zero
-    eigenvalues, V = spla.eigsh(L, k=num_eigs, which='SM')
+    np.random.seed(42)
+    v0 = np.random.rand(L.shape[0]) # to avoid it from randomly picking its own starting vector
+    eigenvalues, V = spla.eigsh(L, k=num_eigs, which='SM', v0=v0)
 
     # Ensure eigenvalues are non-negative (Laplacian property, but float math can drift)
     eigenvalues = np.maximum(eigenvalues, 0)
@@ -718,7 +720,7 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, iters, alpha = 10.0, lam = 1
         # num_eigs = 0.5% of the pixels (equal to K)?
         labeled_indices = algo_1_active_learning(X, W, m_initial=m_0, M_total=int(0.004*N), num_eigs=int(N*0.005))
 
-        print("Labeled indices:", labeled_indices)
+        #print("Labeled indices:", labeled_indices)
 
         # ==========================================
         # Phase 2: Extract Training Data
