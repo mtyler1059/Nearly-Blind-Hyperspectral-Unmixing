@@ -318,7 +318,7 @@ if __name__ == "__main__":
     prep = [X_hat, A_hat_OH, "OH"]
 
     print("Running consistency check (expect ~14)...")
-    _check = Parallel(n_jobs=-1)(delayed(sum_RMSE_SAD)(
+    _check = Parallel(n_jobs=1)(delayed(sum_RMSE_SAD)(
         X_chem_FeSO4, A_gt_chem_FeSO4, S_gt_chem_FeSO4, 1000, iters, 100.0, 1.0, 0.01, 0.01, 2,
         print_bool=False, OH_labels=True, GRSU_bool=False, prep=prep
     ) for _ in range(1))
