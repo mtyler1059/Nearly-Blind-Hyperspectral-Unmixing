@@ -949,6 +949,9 @@ def vca(X, R = 2, snr_input=0):
     """
     p, N = X.shape
 
+    # Involves randomness
+    np.random.seed(42)
+
     # SNR estimation and projection method selection
     X_m = np.mean(X, axis=1, keepdims=True)
     X_o = X - X_m
