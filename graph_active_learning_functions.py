@@ -468,7 +468,7 @@ def algo_2_glu(X, X_hat, A_hat, alpha=10.0, k=50):
 
 
 
-def algo_3_grsu(X, X_hat, A_hat, alpha, lam, gamma, rho, A_gt, S_gt, max_iters=1000, eps=1e-3, k=50, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = ""):
+def algo_3_grsu(X, X_hat, A_hat, alpha, lam, gamma, rho, A_gt, S_gt, max_iters=1000, eps=1e-3, k=50, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = "", array_plots = False):
     """
     Executes the Graph-Regularized Semi-Supervised Unmixing (GRSU) model (Algorithm 3).
 
@@ -587,7 +587,11 @@ def algo_3_grsu(X, X_hat, A_hat, alpha, lam, gamma, rho, A_gt, S_gt, max_iters=1
     graph_plotter(i = i, A_error = A_error, RMSE_plot = RMSE_plot, Energy_plot = Energy_plot,
                   A_error_array = A_error_array, RMSE_array = RMSE_array, Energy_array = Energy_array, title_0 = title_0) 
 
-    return A, S
+    # Figure out what to return
+    if array_plots:
+        return RMSE_array, Energy_array
+    else:
+        return A, S
 
 
 
@@ -687,7 +691,7 @@ def algo_1_active_learning(X, W, m_initial=5, M_total=40, num_eigs=50, gamma=0.1
 
 
 
-def run_unmixing_pipeline_example(X, A_gt, S_gt, N, iters, alpha = 10.0, lam = 1.0, gamma = 1.0, rho = 1.0, m_0 = 2, print_bool = True, OH_labels = True, GRSU_bool = True, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = "", prep = None):
+def run_unmixing_pipeline_example(X, A_gt, S_gt, N, iters, alpha = 10.0, lam = 1.0, gamma = 1.0, rho = 1.0, m_0 = 2, print_bool = True, OH_labels = True, GRSU_bool = True, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = "", prep = None, array_plots = False):
     # ==========================================
     # Phase 0: Load Data (Mocking Jasper Ridge)
     # ==========================================
@@ -785,8 +789,14 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, iters, alpha = 10.0, lam = 1
             A_error = A_error,
             RMSE_plot = RMSE_plot,
             Energy_plot = Energy_plot,
-            title_0 = title_0
+            title_0 = title_0,
+            array_plots = array_plots
         )
+
+    # If we just want the RMSE and/or Energy arrays
+    if array_plots:
+        # Slightly confusing notation, but A_final = RMSE_array and S_final = Energy_array
+        return A_final, S_final, None, None
 
     # Calculate RMSE and SAD
     A_rmse = RMSE(A_final, A_gt)
@@ -1293,7 +1303,7 @@ def algo_2_almm(X, S, alpha, beta, gamma, eta, maxIter):
 
 
 
-def algo_2_almm_optimized(X, S, A_gt, alpha, beta, gamma, eta, maxIter, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = ""):
+def algo_2_almm_optimized(X, S, A_gt, alpha, beta, gamma, eta, maxIter, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = "", array_plots = False):
     """
     Optimized ALMM-Based SVDL.
     Note: Requires passing A_initial (from SCLSU) as an argument since 
@@ -1467,7 +1477,11 @@ def algo_2_almm_optimized(X, S, A_gt, alpha, beta, gamma, eta, maxIter, A_error 
     graph_plotter(i = t, A_error = A_error, RMSE_plot = RMSE_plot, Energy_plot = Energy_plot,
                   A_error_array = A_error_array, RMSE_array = RMSE_array, Energy_array = Energy_array, title_0 = title_0) 
     
-    return E, A, T_final, B
+    # Figure out what to return
+    if array_plots:
+        return RMSE_array, Energy_array, None, None
+    else:
+        return E, A, T_final, B
 
 
 
@@ -1513,7 +1527,7 @@ def half_threshold(z, alpha, xi):
 
 
 
-def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_0, L_uu, L_lu_T_A_hat_T, A_gt, A_hat, W, labeled_indices, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = ""):
+def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_0, L_uu, L_lu_T_A_hat_T, A_gt, A_hat, W, labeled_indices, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = "", array_plots = False):
     """
     Optimized ALMM-Based SVDL.
     Note: Requires passing A_initial (from SCLSU) as an argument since 
@@ -1762,7 +1776,11 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
     graph_plotter(i = t, A_error = A_error, RMSE_plot = RMSE_plot, Energy_plot = Energy_plot,
                   A_error_array = A_error_array, RMSE_array = RMSE_array, Energy_array = Energy_array, title_0 = title_0) 
     
-    return E, A, T_final, B
+    # Figure out what to return
+    if array_plots:
+        return RMSE_array, Energy_array, None, None
+    else:
+        return E, A, T_final, B
 
 
 
@@ -1778,7 +1796,7 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
 
 
 
-def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, maxIter, M_total_0, m_0 = 2, xi_0 = 1e-3, OH_labels = True, print_bool = True, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = "", W_0 = None):
+def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, maxIter, M_total_0, m_0 = 2, xi_0 = 1e-3, OH_labels = True, print_bool = True, A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = "", W_0 = None, array_plots = False):
 
     # ==========================================
     # Phase 1: Active Learning (Algorithm 1)
@@ -1842,7 +1860,12 @@ def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, ma
         beta = beta, gamma = gamma, eta = eta, 
         maxIter = maxIter, xi_0 = xi_0, 
         L_uu = L_uu, L_lu_T_A_hat_T = L_lu_T_A_hat_T, A_gt = A_gt, A_hat = A_hat_test, W = W, labeled_indices = labeled_indices,
-        A_error = A_error, RMSE_plot = RMSE_plot, Energy_plot = Energy_plot, title_0 = title_0)
+        A_error = A_error, RMSE_plot = RMSE_plot, Energy_plot = Energy_plot, title_0 = title_0, array_plots = array_plots)
+
+    # If we just want the RMSE and/or Energy arrays
+    if array_plots:
+        # Slightly confusing notation, but E_final = RMSE_array and A_final = Energy_array
+        return E_final, A_final, None, None
 
     # Calculate RMSE and SAD
 
@@ -1902,6 +1925,65 @@ def graph_plotter(i, A_error, RMSE_plot, Energy_plot, A_error_array, RMSE_array,
             ax.set_xlabel("Iterations")
             ax.set_ylabel(title)
             ax.set_title(title)
+
+        fig.suptitle(title_0, fontsize=16)
+        plt.tight_layout()
+        plt.show()
+
+    return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def graph_plotter_multiple(A_error, RMSE_plot, Energy_plot, A_error_data, RMSE_data, Energy_data, title_0):
+    # fixed color mapping so each algorithm keeps the same color across all subplots
+    color_map = {
+        "GLU": "black",
+        "GRSU": "tab:blue",
+        "ALMM": "tab:orange",
+        "Graph-ALMM": "tab:green",
+    }
+
+    plots_to_show = []
+    if A_error:
+        plots_to_show.append(("A Error (||A_new - A||)", A_error_data))
+    if RMSE_plot:
+        plots_to_show.append(("RMSE", RMSE_data))
+    if Energy_plot:
+        plots_to_show.append(("Energy", Energy_data))
+
+    if plots_to_show:
+        fig, axes = plt.subplots(1, len(plots_to_show), figsize=(6*len(plots_to_show), 5))
+        if len(plots_to_show) == 1:
+            axes = [axes]
+
+        for ax, (title, series_list) in zip(axes, plots_to_show):
+            for label, data in series_list:
+                color = color_map.get(label, None)  # falls back to auto-color if label not in map
+
+                if isinstance(data, (int, float)):
+                    ax.axhline(y=data, linestyle='--', linewidth=2, label=label, color=color)
+                else:
+                    x_vals = range(len(data))
+                    ax.plot(x_vals, data, label=label, linewidth=2, color=color)
+
+            ax.set_xlabel("Iterations")
+            ax.set_ylabel(title)
+            ax.set_title(title)
+            ax.legend(title="Algorithm", loc="best", fontsize=9)
 
         fig.suptitle(title_0, fontsize=16)
         plt.tight_layout()
