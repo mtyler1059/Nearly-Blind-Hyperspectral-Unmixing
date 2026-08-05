@@ -795,8 +795,20 @@ def run_unmixing_pipeline_example(X, A_gt, S_gt, N, iters, alpha = 10.0, lam = 1
 
     # If we just want the RMSE and/or Energy arrays
     if array_plots:
-        # Slightly confusing notation, but A_final = RMSE_array and S_final = Energy_array
-        return A_final, S_final, None, None
+
+        # Pick between GRSU and GLU energy
+        if GRSU_bool:
+            # Slightly confusing notation, but A_final = RMSE_array and S_final = Energy_array
+            return A_final, S_final, None, None
+        
+        else:
+            # Calculate energy
+            q, M = A_hat_test.shape
+            A_unlabeled = A_gt[:, M:]
+            GLU_energy_ = GLU_energy(A = A_unlabeled, W = W, M = M)
+
+            return GLU_energy_, None, None, None
+            
 
     # Calculate RMSE and SAD
     A_rmse = RMSE(A_final, A_gt)
@@ -2584,6 +2596,30 @@ def compute_I1_I2(A, A_hat, W, M):
     I2 = 0.25 * W_ul.multiply(dist_sq_ul).sum()
     
     return I1, I2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def GLU_energy(A, W, M):
+    W_uu = W[M:, M:] # unlabeled to unlabeled
+    
+    A_sq = np.sum(A**2, axis=0)
+    dist_sq_uu = A_sq[:, None] + A_sq[None, :] - 2*(A.T @ A)
+    I1 = 0.25 * W_uu.multiply(dist_sq_uu).sum()
+
+    return I1
+
 
 
 
