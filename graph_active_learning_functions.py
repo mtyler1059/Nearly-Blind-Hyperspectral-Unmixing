@@ -923,7 +923,7 @@ def parameter_testing(X, A_gt, S_gt, N, iters, alpha, lam, gamma, rho, m_0, prin
     prep = [X_hat, A_hat_test, label_title]
 
     # Run the function using combinations
-    results = Parallel(n_jobs =1)(
+    results = Parallel(n_jobs =-1)(
         delayed(sum_RMSE_SAD)(X, A_gt, S_gt, N, iters, alpha_0, lam_0, gamma_0, rho_0, m_0, print_bool, OH_labels, GRSU_bool, prep) for alpha_0, lam_0, gamma_0, rho_0 in combos
     )
 
@@ -2277,7 +2277,7 @@ def best_param_graph_almm(X, A_gt, S_gt, N, maxIter, alpha_0, beta_0, gamma_0, e
     G, W = build_custom_knn_graph(X.T, K=int(N*0.005))
 
     # Run the function using combinations
-    results = Parallel(n_jobs =1)(
+    results = Parallel(n_jobs =-1)(
         delayed(min_RMSE_graph_almm)(X = X, S = S_gt, A = A_gt, 
                         N = N, alpha = alpha_0, beta = beta_0, gamma = gamma_0, eta = eta_0, maxIter = maxIter, 
                         M_total_0 = M_total_0, m_0 = m_0, xi_0 = xi_0, 
@@ -2482,7 +2482,7 @@ def best_param_almm(X, A_gt, S_gt, maxIter, alpha_0, beta_0, gamma_0, eta_0):
     combos = list(product(alpha, beta, gamma, eta))
 
     # Run the function using combinations
-    results = Parallel(n_jobs =1)(
+    results = Parallel(n_jobs =-1)(
         delayed(min_RMSE_ALMM)(X = X, S = S_gt, A = A_gt, 
                         alpha = a, beta = b, gamma = g, eta = e, maxIter = maxIter) 
                         for a, b, g, e in combos)
