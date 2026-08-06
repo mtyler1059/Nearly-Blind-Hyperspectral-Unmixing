@@ -864,6 +864,32 @@ def sum_RMSE_SAD(X, A_gt, S_gt, N, iters, alpha_0, lam_0, gamma_0, rho_0, m_0, p
                                                             prep = prep)
     return A_RMSE + S_SAD
 
+
+
+
+def RMSE_GRSU(X, A_gt, S_gt, N, iters, alpha_0, lam_0, gamma_0, rho_0, m_0, print_bool = True, OH_labels = True, GRSU_bool = True, prep = None):
+    """
+    Returns RMSE.
+
+    Parameters:
+    X (numpy.ndarray): Data matrix (p, N).
+    A_gt
+    alpha (numpy.ndarray): Regularization parameter for T subproblem.
+    lam (numpy.ndarray): Regularization parameter for B subproblem.
+    gamma (numpy.ndarray): Regularization parameter for S subproblem.
+    rho (numpy.ndarray): Regularization parameter for A subproblem.
+    """
+    A_f, S_f, A_RMSE, S_SAD = run_unmixing_pipeline_example(X, A_gt, S_gt, 
+                                                            N, iters, alpha_0, lam_0, gamma_0, rho_0, m_0, 
+                                                            print_bool = print_bool, OH_labels = OH_labels, GRSU_bool = GRSU_bool, 
+                                                            prep = prep)
+    return A_RMSE
+
+
+
+
+
+
 def parameter_testing(X, A_gt, S_gt, N, iters, alpha, lam, gamma, rho, m_0, print_bool = True, GRSU_bool = True, OH_labels = True):
     """
     Performs grid search on the regularization parameters (alpha, lam, gamma, rho) to find
@@ -950,6 +976,95 @@ def parameter_testing(X, A_gt, S_gt, N, iters, alpha, lam, gamma, rho, m_0, prin
 
     return [alpha_best, lam_best, gamma_best, rho_best]
 
+
+
+
+
+def parameter_testing_RMSE(X, A_gt, S_gt, N, iters, alpha, lam, gamma, rho, m_0, print_bool = True, GRSU_bool = True, OH_labels = True):
+    """
+    Performs grid search on the regularization parameters (alpha, lam, gamma, rho) to find
+    the optimal combination of the four, minimizing A_RMSE.
+
+    Parameters:
+    alpha (numpy.ndarray): Regularization parameter for T subproblem.
+    lam (numpy.ndarray): Regularization parameter for B subproblem.
+    gamma (numpy.ndarray): Regularization parameter for S subproblem.
+    rho (numpy.ndarray): Regularization parameter for A subproblem.
+
+    Returns:
+    best (numpy.ndarray): An array with best combination minimizing A_RMSE + S_SAD
+    in the format [alpha, lam, gamma, rho].
+    """
+
+    # Create a list of each combination
+    combos = list(product(alpha, lam, gamma, rho))
+
+    # Precompute the graph and labels
+
+    # ==========================================
+    # Phase 1: Active Learning (Algorithm 1)
+    # ==========================================
+    if print_bool:
+        print("Building initial graph for Active Learning...")
+    # Scikit-learn expects (samples, features), so we pass X.T
+    # K = 50 was picked for a 10000 pixel image, so roughly 0.5%
+    G, W = build_custom_knn_graph(X.T, K=int(N*0.005))
+
+    if print_bool:
+        print("Running Active Learning...")
+    # Start with 1 random pixel per material (m=4), sample up to 0.4% of total pixels (M=40) [cite: 323]
+    # num_eigs = 0.5% of the pixels (equal to K)?
+    labeled_indices = algo_1_active_learning(X, W, m_initial=m_0, M_total=int(0.004*N), num_eigs=int(N*0.005))
+
+    # ==========================================
+    # Phase 2: Extract Training Data
+    # ==========================================
+    if print_bool:
+        print("Extracting training data and generating pseudo-labels...")
+    # Extract the spectral signatures for the selected pixels
+    X_hat = X[:, labeled_indices]
+
+    # Extract ground-truth abundances and convert to One-Hot pseudo-labels [cite: 321, 322]
+    A_hat_exact = A_gt[:, labeled_indices]
+    A_hat_OH = generate_one_hot_labels(A_hat_exact)
+
+    # Pick between Exact or OH labels
+    if OH_labels:
+        A_hat_test = A_hat_OH
+        label_title = "OH"
+    else:
+        A_hat_test = A_hat_exact
+        label_title = "Exact"
+
+    prep = [X_hat, A_hat_test, label_title]
+
+    # Run the function using combinations
+    results = Parallel(n_jobs =-1)(
+        delayed(RMSE_GRSU)(X, A_gt, S_gt, N, iters, alpha_0, lam_0, gamma_0, rho_0, m_0, print_bool, OH_labels, GRSU_bool, prep) for alpha_0, lam_0, gamma_0, rho_0 in combos
+    )
+
+    # Create a 4D array to match the set order
+    results = np.array(results).reshape(len(alpha), len(lam), len(gamma), len(rho))
+
+    # Find min sum value and the corresponding combination
+    idx = np.unravel_index(results.argmin(), results.shape)
+    min_result = results[idx]
+    alpha_idx, lam_idx, gamma_idx, rho_idx = idx
+
+    # Save the best values
+    alpha_best = alpha[alpha_idx]
+    lam_best = lam[lam_idx]
+    gamma_best = gamma[gamma_idx]
+    rho_best = rho[rho_idx]
+
+    # Print the best values
+    print(f"Best RMSE: {min_result}")
+    print(f"Best alpha: {alpha_best}")
+    print(f"Best lambda: {lam_best}")
+    print(f"Best gamma: {gamma_best}")
+    print(f"Best rho: {rho_best}")
+
+    return [alpha_best, lam_best, gamma_best, rho_best]
 
 
 
@@ -1556,11 +1671,6 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
     #A_0 = SCLSU(X, S)
     #print("Number of labeled points:", len(labeled_indices))
 
-    # 1. Precompute loop-invariant matrices
-    StS = S.T @ S
-    StX = S.T @ X
-    gamma_SSt = gamma * (S @ S.T)
-
     # Initialize standard variables
     G = np.zeros((q, N))
     H = np.zeros((q, N))
@@ -1575,6 +1685,8 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
     Lambda = np.zeros((q, N)) 
     Upsilon = np.zeros((q, N)) 
     Omega = np.zeros((q, N)) 
+    Theta = np.zeros((p, q))
+    V = np.zeros((p, q))
 
     Q = np.zeros((p, L)) 
     Pi = np.zeros((p, L)) 
@@ -1618,10 +1730,11 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
 
     while (not converged) and t < maxIter:
         
+
         # M subproblem (solve instead of inv)
         # S.T @ E @ B evaluated as (S.T @ E) @ B for faster multiplication
-        term2_M = StX - (S.T @ E) @ B + (xi * (A * t_diag)) - Omega
-        M_new = np.linalg.solve(StS + xi * I_q, term2_M)
+        term2_M = (S.T @ X) - (S.T @ E) @ B + (xi * (A * t_diag)) - Omega
+        M_new = np.linalg.solve((S.T @ S) + xi * I_q, term2_M)
 
         # B subproblem
         term2_B = (E.T @ X) - (E.T @ S) @ M_new
@@ -1636,6 +1749,12 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
         A_new_unproj = term1_A * diag_inv
         A_new_unproj = A_new_unproj / (A_new_unproj.sum(axis=0, keepdims=True) + 1e-10)
         A_new = project_onto_simplex(A_new_unproj) # Project onto the simplex for nonnegativity
+
+        # S subproblem
+        term1_S = M @ M.T + xi * I_q
+        term2_S = (X - E @ B) @ M.T + Theta + xi * V
+
+        S_new = np.linalg.solve(term1_S, term2_S.T).T
 
         # T subproblem (Woodbury Matrix Identity to avoid N x N operations)
         Y = xi * M_new + Omega
@@ -1652,17 +1771,8 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
         D = xi * u_diag + delta_diag
         T_new_diag = (1.0 / xi) * diag_At_Z + (1.0 / xi) * D * (1.0 - diag_A_K_A)
 
-        # # E subproblem (Right-side solve using Transpose)
-        # term1_E = (X @ B_new.T) - S @ (M_new @ B_new.T) + (xi * Q) + Pi
-        # term2_E_inv = (B_new @ B_new.T) + xi * I_L
-        # E_new = np.linalg.solve(term2_E_inv, term1_E.T).T
-
-        # # Q subproblem
-        # term1_Q_inv = gamma_SSt + (eta * Q @ Q.T) + xi * I_p
-        # term2_Q = (eta * Q) + (xi * E_new) - Pi
-        # Q_new = np.linalg.solve(term1_Q_inv, term2_Q)
-
         # Q subproblem
+        gamma_SSt = gamma * (S_new @ S_new.T)
         term1_Q_inv = gamma_SSt + (eta * Q @ Q.T) + xi * I_p
         term2_Q = (eta * Q) + (xi * E) - Pi
         Q_new = np.linalg.solve(term1_Q_inv, term2_Q)
@@ -1672,27 +1782,9 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
         term2_E_inv = (B_new @ B_new.T) + xi * I_L
         E_new = np.linalg.solve(term2_E_inv, term1_E.T).T
 
-        # G, H, U subproblems
-        # term1_G = np.maximum(0, np.abs(A_new - (Lambda / xi)) - (alpha / xi))
-        # term2_G = np.sign(A_new - (Lambda / xi))
-        # G_new = term1_G * term2_G 
-
+        # G subproblem
         Z_0 = A_new - (Lambda / xi)
         G_new = half_threshold(Z_0, alpha, xi)
-
-        # Replacing G update with B
-
-        # # Terms in B's update (replaced rho / lam with xi for now)
-        # I_N_sparse = sps.eye(N, format='csr')
-        # L_B_system = L_uu + (xi) * I_N_sparse
-        # #L_lu_T_A_hat_T = L_lu.T @ A_hat.T # Shape: (N, q)
-
-        # RHS_G = -L_lu_T_A_hat_T + (xi) * A_new.T + Lambda.T
-        # G_new_T = np.zeros((N, q))
-
-        # for j in range(q):
-        #     G_new_T[:, j], _ = spla.cg(L_B_system, RHS_G[:, j])
-        # G_new = G_new_T.T
 
 
         # H subproblem — solve only on unlabeled portion
@@ -1717,9 +1809,11 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
         H_new[:, labeled_indices] = A_new[:, labeled_indices]
         H_new[:, unlabeled_indices] = H_unlabeled
         
-        #H_new = np.maximum(0, A_new - (Upsilon / xi)) (temporarily disable)
-
+        # U subproblem
         U_new_diag = np.maximum(0, T_new_diag - (delta_diag / xi))
+
+        # V subproblem
+        V_new = np.maximum(0, S_new - (Theta / xi))
         
 
         # AT subproblem 
@@ -1731,6 +1825,7 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
         Omega_new = Omega + xi * (M_new - AT_new)
         Pi_new = Pi + xi * (Q_new - E_new)
         delta_diag_new = delta_diag + xi * (U_new_diag - T_new_diag)
+        Theta_new = Theta + xi * (V_new - S_new)
 
         xi_new = min(rho * xi, xi_max)
 
@@ -1740,7 +1835,8 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
             (np.linalg.norm(M_new - AT_new) < epsilon) and
             (np.linalg.norm(Q_new - E_new) < epsilon) and 
             (np.linalg.norm(U_new_diag - T_new_diag) < epsilon) and
-            (np.linalg.norm(E_new - E) < epsilon)):
+            (np.linalg.norm(E_new - E) < epsilon) and
+            (np.linalg.norm(V_new - S_new) < epsilon)):
 
             converged = True
         else:
@@ -1767,6 +1863,7 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
             M = M_new
             B = B_new
             A = A_new
+            S = S_new
             t_diag = T_new_diag
             E = E_new
             Q = Q_new
@@ -1779,6 +1876,8 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
             Omega = Omega_new
             Pi = Pi_new
             delta_diag = delta_diag_new
+            Theta = Theta_new
+            V = V_new
             xi = xi_new
 
     # Reconstruct the N x N diagonal matrix T at the very end to match expected output signature
@@ -1792,7 +1891,7 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
     if array_plots:
         return RMSE_array, Energy_array, None, None
     else:
-        return E, A, T_final, B
+        return E, A, T_final, B, S
 
 
 
@@ -1867,7 +1966,7 @@ def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, ma
     # print("Condition number of S_gt_chem.T @ S_gt_chem:", np.linalg.cond(S_gt_chem.T @ S_gt_chem))
     # print("Condition number of S_GLU.T @ S_GLU:", np.linalg.cond(S_GLU.T @ S_GLU))
 
-    E_final, A_final, T_final, B_final = algo_2_graph_almm_optimized(
+    E_final, A_final, T_final, B_final, S_final = algo_2_graph_almm_optimized(
         X = X, A_0 = A_GLU, S = S_GLU, alpha = alpha, 
         beta = beta, gamma = gamma, eta = eta, 
         maxIter = maxIter, xi_0 = xi_0, 
@@ -1889,7 +1988,7 @@ def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, ma
         A_f_corrected = A_final
 
     A_rmse = RMSE(A_f_corrected, A_gt)
-    S_sad = SAD(S_GLU, S_gt)
+    S_sad = SAD(S_final, S_gt)
 
     if print_bool:
         print("Pipeline Complete!\n")
@@ -1898,7 +1997,7 @@ def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, ma
         print(f"Final Abundance RMSE: {A_rmse}")
         print(f"Final Endmember SAD: {S_sad}")
 
-    return A_final, S_GLU, A_rmse, S_sad
+    return A_final, S_final, A_rmse, S_sad
 
 
 
@@ -2244,6 +2343,33 @@ def min_RMSE_graph_almm(X, S, A, N, maxIter, alpha, beta, gamma, eta, M_total_0,
 
 
 
+def min_RMSE_SAD_graph_almm(X, S, A, N, maxIter, alpha, beta, gamma, eta, M_total_0, m_0, xi_0, OH_labels, W_0 = None):
+    """
+    Returns the RMSE of Graph ALMM (S_sad is assumed to be constant here).
+    """
+    A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example2(X = X, A_gt = A, S_gt = S, 
+                                                             N = N, alpha = alpha, beta = beta, gamma = gamma, eta = eta, maxIter = maxIter, 
+                                                             M_total_0 = M_total_0, m_0 = m_0, xi_0 = xi_0, 
+                                                             OH_labels = OH_labels, print_bool = False, 
+                                                             A_error = False, RMSE_plot = False, Energy_plot = False, title_0 = "", W_0 = W_0)
+    
+    return A_rmse + S_sad
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def best_param_graph_almm(X, A_gt, S_gt, N, maxIter, alpha_0, beta_0, gamma_0, eta_0, m_0):
     """
     Performs grid search on some regularization parameters (alpha, M_total, xi, OH vs. Exact) to find
@@ -2312,6 +2438,89 @@ def best_param_graph_almm(X, A_gt, S_gt, N, maxIter, alpha_0, beta_0, gamma_0, e
 
     return [alpha_best, M_total_best, xi_best, OH_labels_best]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def best_param_graph_almm_RMSE_SAD(X, A_gt, S_gt, N, maxIter, alpha_0, beta_0, gamma_0, eta_0, m_0):
+    """
+    Performs grid search on some regularization parameters (alpha, M_total, xi, OH vs. Exact) to find
+    the optimal combination of the four, minimizing the sum A_RMSE + S_SAD.
+
+    Parameters:
+    alpha_0 (numpy.ndarray): [alpha_0, alpha_0/10, alpha_0/100, alpha_0/1000, alpha_0/10000]
+    M_total (numpy.ndarray): [j * (N * 0.004) for j in range(1, 5)]
+
+
+    Returns:
+    best (numpy.ndarray): An array with best combination minimizing A_RMSE + S_SAD
+    in the format [alpha, lam, gamma, rho].
+    """
+
+    # Create a list of each combination
+    alpha = [alpha_0, alpha_0/10, alpha_0/100, alpha_0/1000, alpha_0/10000]
+    M_total = [j * (N * 0.004) for j in range(1, 5)]
+    xi = [10**i for i in range(2, -5, -1)]
+    OH_labels = [True, False]
+
+    combos = list(product(alpha, M_total, xi, OH_labels))
+
+    # Precompute the graph
+
+    # ==========================================
+    # Phase 1: Active Learning (Algorithm 1)
+    # ==========================================
+    # Scikit-learn expects (samples, features), so we pass X.T
+    # K = 50 was picked for a 10000 pixel image, so roughly 0.5%
+    G, W = build_custom_knn_graph(X.T, K=int(N*0.005))
+
+    # Run the function using combinations
+    results = Parallel(n_jobs =-1)(
+        delayed(min_RMSE_SAD_graph_almm)(X = X, S = S_gt, A = A_gt, 
+                        N = N, alpha = alpha_0, beta = beta_0, gamma = gamma_0, eta = eta_0, maxIter = maxIter, 
+                        M_total_0 = M_total_0, m_0 = m_0, xi_0 = xi_0, 
+                        OH_labels = label, W_0 = W) for alpha_0, M_total_0, xi_0, label in combos)
+
+    # Create a 4D array to match the set order
+    results = np.array(results).reshape(len(alpha), len(M_total), len(xi), len(OH_labels))
+
+    # Find min sum value and the corresponding combination
+    idx = np.unravel_index(results.argmin(), results.shape)
+    min_result = results[idx]
+    alpha_idx, M_total_idx, xi_idx, OH_labels_idx = idx
+
+    # Save the best values
+    alpha_best = alpha[alpha_idx]
+    M_total_best = M_total[M_total_idx]
+    xi_best = xi[xi_idx]
+    OH_labels_best = OH_labels[OH_labels_idx]
+
+    # changing label title for readability
+    if OH_labels_best == True:
+        label_title = "OH"
+    else:
+        label_title = "Exact"
+
+    # Print the best values
+    print(f"Best RMSE + SAD: {min_result}")
+    print(f"Best alpha: {alpha_best}")
+    print(f"Best M_total: {M_total_best}")
+    print(f"Best xi: {xi_best}")
+    print(f"Best label: {label_title}")
+
+    return [alpha_best, M_total_best, xi_best, OH_labels_best]
 
 
 
