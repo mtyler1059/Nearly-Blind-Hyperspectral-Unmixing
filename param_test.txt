@@ -1,0 +1,513 @@
+==========================================
+Starting Testing
+Minimizing RMSE
+
+
+==========================================
+Testing on CuSO4
+==========================================
+
+
+GLU (OH)
+==========
+Best RMSE: 31.394189732623595
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 31.394189732623595
+ SAD: 38.33046383289312
+
+GLU (Exact)
+==========
+Best RMSE: 26.952678221262545
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 26.952678221262545
+ SAD: 35.46403023707354
+
+
+GRSU (OH)
+==========
+Best RMSE: 19.286822360877007
+Best alpha: 20
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 100.0
+RMSE: 19.286822360877007
+ SAD: 38.01406874296615
+
+GRSU (Exact)
+==========
+Best RMSE: 7.31577439667719
+Best alpha: 100
+Best lambda: 5000
+Best gamma: 100.0
+Best rho: 1.0
+RMSE: 7.31577439667719
+ SAD: 39.192777360701236
+
+
+ALMM
+==========
+Best RMSE: 37.52591860242572
+Best alpha: 5.499999999999999e-07
+Best beta: 5.499999999999999e-07
+Best gamma: 5.499999999999999e-07
+Best eta: 5.499999999999999e-07
+
+
+Graph ALMM
+==========
+Best RMSE: 7.133642795130377
+Best alpha: 5.499999999999999e-07
+Best M_total: 4.0
+Best xi: 0.001
+Best label: Exact
+
+
+==========================================
+Testing on FeCl3
+==========================================
+X: (1050, 1000) 
+ S: (1050, 2) 
+ A: (2, 1000)
+
+
+GLU (OH)
+==========
+Best RMSE: 32.98397259931948
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 32.98397259931948
+ SAD: 16.591188057497842
+
+GLU (Exact)
+==========
+Best RMSE: 26.215538757451085
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 26.215538757451085
+ SAD: 13.01693857659212
+
+
+GRSU (OH)
+==========
+Best RMSE: 13.796119479723746
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 13.796119479723746
+ SAD: 13.82895730245292
+
+GRSU (Exact)
+==========
+Best RMSE: 3.983381520862781
+Best alpha: 100
+Best lambda: 5000
+Best gamma: 100.0
+Best rho: 100.0
+RMSE: 3.983381520862781
+ SAD: 14.208379253360313
+
+
+ALMM
+==========
+Best RMSE: 22.329015186243275
+Best alpha: 5.4999999999999995e-05
+Best beta: 5.499999999999999e-07
+Best gamma: 5.499999999999999e-07
+Best eta: 5.499999999999999e-07
+
+
+Graph ALMM
+==========
+Best RMSE: 3.45365221411469
+Best alpha: 5.499999999999999e-07
+Best M_total: 16.0
+Best xi: 0.01
+Best label: Exact
+
+
+==========================================
+Testing on FeSO4
+==========================================
+Running consistency check (expect ~14)...
+Sanity check result: 32.920149261558066
+
+
+GLU (OH)
+==========
+Best RMSE: 26.964293673201418
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 26.964293673201418
+ SAD: 5.695270233296406
+
+GLU (Exact)
+==========
+Best RMSE: 23.43822687689505
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 23.43822687689505
+ SAD: 3.815368237107588
+
+
+GRSU (OH)
+==========
+Best RMSE: 16.56678957671235
+Best alpha: 10
+Best lambda: 1
+Best gamma: 100.0
+Best rho: 100.0
+RMSE: 16.56678957671235
+ SAD: 4.204776849626716
+
+GRSU (Exact)
+==========
+Best RMSE: 1.6970050181578018
+Best alpha: 10
+Best lambda: 5000
+Best gamma: 100.0
+Best rho: 0.01
+RMSE: 1.6970050181578018
+ SAD: 3.2979389070520106
+
+
+ALMM
+==========
+Best RMSE: 16.236957691397667
+Best alpha: 0.0005499999999999999
+Best beta: 5.499999999999999e-07
+Best gamma: 5.499999999999999e-07
+Best eta: 5.499999999999999e-07
+
+
+Graph ALMM
+==========
+Best RMSE: 1.454716958161076
+Best alpha: 5.499999999999999e-07
+Best M_total: 16.0
+Best xi: 0.01
+Best label: Exact
+
+
+==========================================
+Testing on CuSO4 (Exponentially distributed)
+==========================================
+X: (1000, 1000) 
+ S: (1000, 2) 
+ A: (2, 1000)
+
+
+GLU (OH)
+==========
+Best RMSE: 13.95936309754676
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 13.95936309754676
+ SAD: 29.78573957508704
+
+GLU (Exact)
+==========
+Best RMSE: 4.687118958152869
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 4.687118958152869
+ SAD: 23.43141577933115
+
+
+GRSU (OH)
+==========
+Best RMSE: 4.187741969840447
+Best alpha: 10
+Best lambda: 5000
+Best gamma: 0.01
+Best rho: 1.0
+RMSE: 4.187741969840447
+ SAD: 27.26999941902028
+
+GRSU (Exact)
+==========
+Best RMSE: 10.945613606359462
+Best alpha: 10
+Best lambda: 5000
+Best gamma: 0.01
+Best rho: 10.0
+RMSE: 10.945613606359462
+ SAD: 22.507358712535197
+
+
+ALMM
+==========
+Best RMSE: 39.37278751933467
+Best alpha: 5.4999999999999995e-05
+Best beta: 5.499999999999999e-07
+Best gamma: 5.499999999999999e-07
+Best eta: 5.499999999999999e-07
+
+
+Graph ALMM
+==========
+Best RMSE: 2.7381946394762755
+Best alpha: 5.4999999999999995e-05
+Best M_total: 16.0
+Best xi: 0.01
+Best label: Exact
+
+
+Finished Testing
+==========================================
+
+==========================================
+Starting Testing
+Minimizing RMSE + SAD
+
+
+==========================================
+Testing on CuSO4
+==========================================
+
+
+GLU (OH)
+==========
+Best RMSE + SAD: 69.72465356551672
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 31.394189732623595
+ SAD: 38.33046383289312
+
+GLU (Exact)
+==========
+Best RMSE + SAD: 62.41670845833608
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 26.952678221262545
+ SAD: 35.46403023707354
+
+
+GRSU (OH)
+==========
+Best RMSE + SAD: 54.84649911950132
+Best alpha: 10
+Best lambda: 5000
+Best gamma: 0.01
+Best rho: 0.1
+RMSE: 20.064040801238452
+ SAD: 34.78245831826286
+
+GRSU (Exact)
+==========
+Best RMSE + SAD: 41.64900869471098
+Best alpha: 10
+Best lambda: 5000
+Best gamma: 100.0
+Best rho: 10.0
+RMSE: 10.085611678972196
+ SAD: 31.563397015738783
+
+
+Graph ALMM
+==========
+Best RMSE + SAD: 35.682830642057105
+Best alpha: 5.499999999999999e-07
+Best M_total: 4.0
+Best xi: 1
+Best label: Exact
+
+
+==========================================
+Testing on FeCl3
+==========================================
+X: (1050, 1000) 
+ S: (1050, 2) 
+ A: (2, 1000)
+
+
+GLU (OH)
+==========
+Best RMSE + SAD: 49.57516065681732
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 32.98397259931948
+ SAD: 16.591188057497842
+
+GLU (Exact)
+==========
+Best RMSE + SAD: 39.2324773340432
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 26.215538757451085
+ SAD: 13.01693857659212
+
+
+GRSU (OH)
+==========
+Best RMSE + SAD: 27.625076782176667
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 13.796119479723746
+ SAD: 13.82895730245292
+
+GRSU (Exact)
+==========
+Best RMSE + SAD: 16.726342059375547
+Best alpha: 10
+Best lambda: 5000
+Best gamma: 100.0
+Best rho: 10.0
+RMSE: 5.011044279456194
+ SAD: 11.715297779919352
+
+
+Graph ALMM
+==========
+Best RMSE + SAD: 14.56529460991624
+Best alpha: 5.499999999999999e-07
+Best M_total: 16.0
+Best xi: 100
+Best label: Exact
+
+
+==========================================
+Testing on FeSO4
+==========================================
+
+
+GLU (OH)
+==========
+Best RMSE + SAD: 32.65956390649782
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 26.964293673201418
+ SAD: 5.695270233296406
+
+GLU (Exact)
+==========
+Best RMSE + SAD: 27.25359511400264
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 23.43822687689505
+ SAD: 3.815368237107588
+
+
+GRSU (OH)
+==========
+Best RMSE + SAD: 20.771566426339064
+Best alpha: 10
+Best lambda: 1
+Best gamma: 100.0
+Best rho: 100.0
+RMSE: 16.56678957671235
+ SAD: 4.204776849626716
+
+GRSU (Exact)
+==========
+Best RMSE + SAD: 4.977519514237006
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 1.7110316841235034
+ SAD: 3.266487830113503
+
+
+Graph ALMM
+==========
+Best RMSE + SAD: 10.987259107390434
+Best alpha: 0.0055
+Best M_total: 16.0
+Best xi: 100
+Best label: Exact
+
+
+==========================================
+Testing on CuSO4 (Exponentially distributed)
+==========================================
+X: (1000, 1000) 
+ S: (1000, 2) 
+ A: (2, 1000)
+
+
+GLU (OH)
+==========
+Best RMSE + SAD: 42.508042837023396
+Best alpha: 100
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 13.95936309754676
+ SAD: 28.548679739476636
+
+GLU (Exact)
+==========
+Best RMSE + SAD: 27.64907197123037
+Best alpha: 100
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 4.687118958152869
+ SAD: 22.9619530130775
+
+
+GRSU (OH)
+==========
+Best RMSE + SAD: 31.457741388860725
+Best alpha: 10
+Best lambda: 5000
+Best gamma: 0.01
+Best rho: 1.0
+RMSE: 4.187741969840447
+ SAD: 27.26999941902028
+
+GRSU (Exact)
+==========
+Best RMSE + SAD: 33.45297231889466
+Best alpha: 10
+Best lambda: 5000
+Best gamma: 0.01
+Best rho: 10.0
+RMSE: 10.945613606359462
+ SAD: 22.507358712535197
+
+
+Graph ALMM
+==========
+Best RMSE + SAD: 30.170977919889303
+Best alpha: 0.0055
+Best M_total: 16.0
+Best xi: 1
+Best label: Exact
+
+
+Finished Testing
+==========================================
