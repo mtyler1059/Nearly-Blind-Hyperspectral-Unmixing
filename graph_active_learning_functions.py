@@ -1889,7 +1889,7 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
     
     # Figure out what to return
     if array_plots:
-        return RMSE_array, Energy_array, None, None
+        return RMSE_array, Energy_array, None, None, None
     else:
         return E, A, T_final, B, S
 
@@ -2033,9 +2033,9 @@ def graph_plotter(i, A_error, RMSE_plot, Energy_plot, A_error_array, RMSE_array,
 
         for ax, (title, data) in zip(axes, plots_to_show):
             ax.plot(x_iterations, data)
-            ax.set_xlabel("Iterations")
-            ax.set_ylabel(title)
-            ax.set_title(title)
+            ax.set_xlabel("Iterations", fontsize=14)
+            ax.set_ylabel(title, fontsize=14)
+            ax.set_title(title, fontsize=16)
 
         fig.suptitle(title_0, fontsize=16)
         plt.tight_layout()
@@ -2091,13 +2091,22 @@ def graph_plotter_multiple(A_error, RMSE_plot, Energy_plot, A_error_data, RMSE_d
                     x_vals = range(len(data))
                     ax.plot(x_vals, data, label=label, linewidth=2, color=color)
 
-            ax.set_xlabel("Iterations")
-            ax.set_ylabel(title)
-            ax.set_title(title)
+            ax.set_xlabel("Iterations", fontsize=14)
+            ax.set_ylabel(title, fontsize=14)
+            ax.set_title(title, fontsize=16)
             ax.legend(title="Algorithm", loc="best", fontsize=9)
 
         fig.suptitle(title_0, fontsize=16)
         plt.tight_layout()
+
+        # Save the image
+        filename = title_0.replace(" ", "_")
+
+        plt.savefig(
+            f"plot_images/{filename}.png",
+            dpi=300,
+            bbox_inches="tight"
+        )
         plt.show()
 
     return
@@ -2746,23 +2755,23 @@ def abundance_plotting(X, A_gt, A_f_GLU, A_f_GRSU, A_f_ALMM, A_f_Graph_ALMM, tit
 
     # Top-left: Ground truth
     sc1 = axes[0, 0].scatter(X_pca1[:,0], X_pca1[:,1], c=A_gt[0], vmin=vmin, vmax=vmax, cmap='viridis')
-    axes[0, 0].set_title('Ground Truth')
+    axes[0, 0].set_title('Ground Truth', fontsize = 14)
 
     # Top-middle: GLU
     sc2 = axes[0,1].scatter(X_pca1[:,0], X_pca1[:,1], c=A_f_GLU[0], vmin=vmin, vmax=vmax, cmap='viridis')
-    axes[0,1].set_title('GLU')
+    axes[0,1].set_title('GLU', fontsize = 14)
 
     # Bottom-left: GRSU
     sc3 = axes[1,0].scatter(X_pca1[:,0], X_pca1[:,1], c=A_f_GRSU[0], vmin=vmin, vmax=vmax, cmap='viridis')
-    axes[1,0].set_title('GRSU')
+    axes[1,0].set_title('GRSU', fontsize = 14)
 
     # Bottom-middle: ALMM
     sc4 = axes[1, 1].scatter(X_pca1[:,0], X_pca1[:,1], c=A_f_ALMM[0], vmin=vmin, vmax=vmax, cmap='viridis')
-    axes[1, 1].set_title('ALMM')
+    axes[1, 1].set_title('ALMM', fontsize = 14)
 
     # # Top-right: Graph-ALMM
     sc5 = axes[0, 2].scatter(X_pca1[:,0], X_pca1[:,1], c=A_f_Graph_ALMM[0], vmin=vmin, vmax=vmax, cmap='viridis')
-    axes[0, 2].set_title('Graph-ALMM')
+    axes[0, 2].set_title('Graph-ALMM', fontsize = 14)
 
     # Bottom-right: leave empty, or hide it
     axes[1, 2].axis('off')
@@ -2775,6 +2784,14 @@ def abundance_plotting(X, A_gt, A_f_GLU, A_f_GRSU, A_f_ALMM, A_f_Graph_ALMM, tit
 
     fig.colorbar(sc4, ax=axes, label=color_title, shrink=0.8)
 
+    # Save the image
+    filename = title.replace(" ", "_")
+
+    plt.savefig(
+        f"plot_images/{filename}.png",
+        dpi=300,
+        bbox_inches="tight"
+    )
     plt.show()
 
 
