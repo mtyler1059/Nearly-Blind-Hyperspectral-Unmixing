@@ -1742,7 +1742,7 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
 
         # A subproblem
         # Multiplication by diagonal matrix T is just broadcasting: * t_diag
-        term1_A = ((xi* 1) * G) + Lambda + ((xi *2)* H) + Upsilon + (Omega * t_diag) + (xi * M_new * t_diag)
+        term1_A = ((xi* 1) * G) + Lambda + ((xi*2)* H) + Upsilon + (Omega * t_diag) + (xi * M_new * t_diag)
         
         # term2_A was purely diagonal, so we just divide by the diagonal values!
         diag_inv = 1.0 / (xi * (t_diag ** 2) + 2 * xi)
@@ -1751,8 +1751,8 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
         A_new = project_onto_simplex(A_new_unproj) # Project onto the simplex for nonnegativity
 
         # S subproblem
-        term1_S = M @ M.T + xi * I_q
-        term2_S = (X - E @ B) @ M.T + Theta + xi * V
+        term1_S = M_new @ M_new.T + xi * I_q
+        term2_S = (X - E @ B_new) @ M_new.T + Theta + xi * V
 
         S_new = np.linalg.solve(term1_S, term2_S.T).T
 
@@ -1778,7 +1778,7 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
         Q_new = np.linalg.solve(term1_Q_inv, term2_Q)
 
         # E subproblem (Right-side solve using Transpose)
-        term1_E = (X @ B_new.T) - S @ (M_new @ B_new.T) + (xi * Q_new) + Pi
+        term1_E = (X @ B_new.T) - S_new @ (M_new @ B_new.T) + (xi * Q_new) + Pi
         term2_E_inv = (B_new @ B_new.T) + xi * I_L
         E_new = np.linalg.solve(term2_E_inv, term1_E.T).T
 
@@ -1841,6 +1841,24 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
 
         Err = max(err_S, err_A)
 
+        # if t == 0:
+        #     print("After first update A:", np.sum(A_new))
+        #     print("After first update S:", np.sum(S_new))
+        #     print("S min/max:", S_new.min(), S_new.max())
+        #     print("S norm:", np.linalg.norm(S_new))
+        #     print("M norm:", np.linalg.norm(M_new))
+        #     print("B norm:", np.linalg.norm(B_new))
+        #     print("A norm:", np.linalg.norm(A_new))
+        # if t < 5:
+        #     print(
+        #         t,
+        #         np.linalg.norm(A_new),
+        #         np.linalg.norm(S_new),
+        #         np.linalg.norm(M_new),
+        #         np.linalg.norm(B_new),
+        #         np.linalg.norm(E_new)
+        #     )
+
         if (((np.linalg.norm(G_new - A_new) < epsilon) and 
             (np.linalg.norm(H_new - A_new) < epsilon) and
             (np.linalg.norm(M_new - AT_new) < epsilon) and
@@ -1881,6 +1899,7 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
             G = G_new
             H = H_new
             u_diag = U_new_diag
+            V = V_new
 
             Lambda = Lambda_new
             Upsilon = Upsilon_new
@@ -1888,7 +1907,6 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
             Pi = Pi_new
             delta_diag = delta_diag_new
             Theta = Theta_new
-            V = V_new
             xi = xi_new
 
     # Reconstruct the N x N diagonal matrix T at the very end to match expected output signature
@@ -1899,6 +1917,7 @@ def algo_2_graph_almm_optimized(X, A_0, S, alpha, beta, gamma, eta, maxIter, xi_
                   A_error_array = A_error_array, RMSE_array = RMSE_array, Energy_array = Energy_array, title_0 = title_0) 
     
     # Figure out what to return
+    #print(f"iterations: {t}")
     if array_plots:
         return RMSE_array, Energy_array, None, None, None
     else:
@@ -1923,6 +1942,13 @@ def run_unmixing_pipeline_example2(X, A_gt, S_gt, N, alpha, beta, gamma, eta, ma
     # ==========================================
     # Phase 1: Active Learning (Algorithm 1)
     # ==========================================
+
+    # Check if we are running the same file
+    # import hashlib
+    # import inspect
+
+    # source = inspect.getsource(algo_2_almm_optimized)
+    # print(hashlib.md5(source.encode()).hexdigest())
 
     if W_0 is None:
         if print_bool:
