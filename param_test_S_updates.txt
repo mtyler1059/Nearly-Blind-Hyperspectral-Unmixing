@@ -1,0 +1,142 @@
+==========================================
+Starting Testing
+Ver 1: S update is at the top
+Ver 2: S update is right after M
+Ver 3: S update is right after E
+Minimizing RMSE
+
+
+==========================================
+Testing on CuSO4
+==========================================
+
+
+Graph ALMM (Ver 1)
+==========
+Best RMSE: 24.265424667396317
+Best alpha: 5.499999999999999e-07
+Best M_total: 16.0
+Best xi: 0.0001
+Best label: Exact
+
+
+Graph ALMM (Ver 2)
+==========
+Best RMSE: 8.834549485514689
+Best alpha: 0.0055
+Best M_total: 4.0
+Best xi: 10
+Best label: Exact
+
+
+Graph ALMM (Ver 3)
+==========
+Best RMSE: 8.71163378657868
+Best alpha: 5.499999999999999e-07
+Best M_total: 4.0
+Best xi: 10
+Best label: Exact
+
+
+==========================================
+Testing on FeCl3
+==========================================
+
+
+Graph ALMM (Ver 1)
+==========
+Best RMSE: 19.54101741437173
+Best alpha: 5.4999999999999995e-05
+Best M_total: 16.0
+Best xi: 0.01
+Best label: Exact
+
+
+Graph ALMM (Ver 2)
+==========
+Best RMSE: 4.005384855660999
+Best alpha: 5.499999999999999e-07
+Best M_total: 8.0
+Best xi: 100
+Best label: Exact
+
+
+Graph ALMM (Ver 3)
+==========
+Best RMSE: 4.121672898160191
+Best alpha: 0.0055
+Best M_total: 8.0
+Best xi: 100
+Best label: Exact
+
+
+==========================================
+Testing on FeSO4
+==========================================
+
+
+Graph ALMM (Ver 1)
+==========
+Best RMSE: 14.269127208389218
+Best alpha: 5.499999999999999e-07
+Best M_total: 16.0
+Best xi: 0.01
+Best label: Exact
+
+
+Graph ALMM (Ver 2)
+==========
+Best RMSE: 3.817336932819292
+Best alpha: 0.0055
+Best M_total: 16.0
+Best xi: 10
+Best label: Exact
+
+
+Graph ALMM (Ver 3)
+==========
+Best RMSE: 3.2145241330137546
+Best alpha: 0.0055
+Best M_total: 16.0
+Best xi: 10
+Best label: Exact
+
+
+==========================================
+Testing on CuSO4 (Exponentially distributed)
+==========================================
+X: (1000, 1000) 
+ S: (1000, 2) 
+ A: (2, 1000)
+
+
+Graph ALMM (Ver 1)
+==========
+Best RMSE: 1.3199050694410632
+Best alpha: 0.0055
+Best M_total: 16.0
+Best xi: 1
+Best label: Exact
+
+
+Graph ALMM (Ver 2)
+==========
+Best RMSE: 4.31501990578056
+Best alpha: 5.499999999999999e-07
+Best M_total: 4.0
+Best xi: 0.01
+Best label: OH
+
+
+Graph ALMM (Ver 3)
+==========
+Best RMSE: 4.741006528047597
+Best alpha: 5.499999999999999e-07
+Best M_total: 4.0
+Best xi: 0.1
+Best label: OH
+
+
+Finished Testing
+==========================================
+
