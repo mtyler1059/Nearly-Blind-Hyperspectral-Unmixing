@@ -2276,7 +2276,7 @@ def load_data(name, typename, sample = False, print_bool = True):
     elif typename == 'nonlinear':
         if print_bool:
             print("Shape of X:", X_gt_flat.shape)
-        return X_gt, S_gt, A_gt 
+        return X_gt_flat, S_gt, A_gt 
     elif typename == 'HSI':
 
         # Sample 50x50 patch or return the entire image
