@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     # Set seed
     np.random.seed(42)
-    # caffeinate -i python3 -u param_test_diff_datasets.py | tee test_results/param_test_diff_datasets_all_alg.txt
+    # caffeinate -i python3 -u param_test_diff_datasets.py | tee test_results/param_test_diff_datasets_grsu_glu.txt
 
     # Parameter values 
     # GLU and GRSU
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_OH_urban = parameter_testing_RMSE(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = True)
     
     alpha_1 = params_GLU_OH_urban[0]
@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_OH_urban = parameter_testing(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = True)
     
     alpha_1 = params_GLU_OH_urban[0]
@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_exact_urban = parameter_testing_RMSE(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = False)
     
     alpha_1 = params_GLU_exact_urban[0]
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -140,7 +140,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_exact_urban = parameter_testing(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = False)
     
     alpha_1 = params_GLU_exact_urban[0]
@@ -150,7 +150,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -162,7 +162,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_OH_urban = parameter_testing_RMSE(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = True)
     
     alpha_1 = params_GRSU_OH_urban[0]
@@ -172,7 +172,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_OH_urban = parameter_testing(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = True)
     
     alpha_1 = params_GRSU_OH_urban[0]
@@ -194,7 +194,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -206,7 +206,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_exact_urban = parameter_testing_RMSE(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = False)
     
     alpha_1 = params_GRSU_exact_urban[0]
@@ -216,7 +216,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -228,7 +228,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_exact_urban = parameter_testing(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = False)
     
     alpha_1 = params_GRSU_exact_urban[0]
@@ -238,7 +238,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_0, A_gt = A_0, S_gt = S_0, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -246,28 +246,28 @@ if __name__ == "__main__":
 
 
 
-    ### ALMM
+    # ### ALMM
 
-    print("\n\nALMM")
-    print("==========")
+    # print("\n\nALMM")
+    # print("==========")
 
-    best_param_almm(X = X_0, A_gt = A_0, S_gt = S_0,
-                    maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0)
+    # best_param_almm(X = X_0, A_gt = A_0, S_gt = S_0,
+    #                 maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0)
 
 
-    ### Graph ALMM
+    # ### Graph ALMM
 
-    print("\n\nGraph ALMM (RMSE)")
-    print("==========")
+    # print("\n\nGraph ALMM (RMSE)")
+    # print("==========")
     
-    best_param_graph_almm(X = X_0, A_gt = A_0, S_gt = S_0, N = samples,
-                        maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
+    # best_param_graph_almm(X = X_0, A_gt = A_0, S_gt = S_0, N = samples,
+    #                     maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
 
-    print("\n\nGraph ALMM (RMSE + SAD)")
-    print("==========")
+    # print("\n\nGraph ALMM (RMSE + SAD)")
+    # print("==========")
     
-    best_param_graph_almm_RMSE_SAD(X = X_0, A_gt = A_0, S_gt = S_0, N = samples,
-                        maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
+    # best_param_graph_almm_RMSE_SAD(X = X_0, A_gt = A_0, S_gt = S_0, N = samples,
+    #                     maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
 
 
 
@@ -290,7 +290,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_OH_samson = parameter_testing_RMSE(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = True)
     
     alpha_1 = params_GLU_OH_samson[0]
@@ -300,7 +300,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -312,7 +312,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_OH_samson = parameter_testing(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = True)
     
     alpha_1 = params_GLU_OH_samson[0]
@@ -322,7 +322,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -334,7 +334,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_exact_samson = parameter_testing_RMSE(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = False)
     
     alpha_1 = params_GLU_exact_samson[0]
@@ -344,7 +344,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -356,7 +356,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_exact_samson = parameter_testing(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = False)
     
     alpha_1 = params_GLU_exact_samson[0]
@@ -366,7 +366,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -378,7 +378,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_OH_samson = parameter_testing_RMSE(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = True)
     
     alpha_1 = params_GRSU_OH_samson[0]
@@ -388,7 +388,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -400,7 +400,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_OH_samson = parameter_testing(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = True)
     
     alpha_1 = params_GRSU_OH_samson[0]
@@ -410,7 +410,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -422,7 +422,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_exact_samson = parameter_testing_RMSE(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = False)
     
     alpha_1 = params_GRSU_exact_samson[0]
@@ -432,7 +432,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -444,7 +444,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_exact_samson = parameter_testing(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = False)
     
     alpha_1 = params_GRSU_exact_samson[0]
@@ -454,7 +454,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_2, A_gt = A_2, S_gt = S_2, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -462,28 +462,28 @@ if __name__ == "__main__":
 
 
 
-    ### ALMM
+    # ### ALMM
 
-    print("\n\nALMM")
-    print("==========")
+    # print("\n\nALMM")
+    # print("==========")
 
-    best_param_almm(X = X_2, A_gt = A_2, S_gt = S_2,
-                    maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0)
+    # best_param_almm(X = X_2, A_gt = A_2, S_gt = S_2,
+    #                 maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0)
 
 
-    ### Graph ALMM
+    # ### Graph ALMM
 
-    print("\n\nGraph ALMM (RMSE)")
-    print("==========")
+    # print("\n\nGraph ALMM (RMSE)")
+    # print("==========")
     
-    best_param_graph_almm(X = X_2, A_gt = A_2, S_gt = S_2, N = samples,
-                        maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
+    # best_param_graph_almm(X = X_2, A_gt = A_2, S_gt = S_2, N = samples,
+    #                     maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
 
-    print("\n\nGraph ALMM (RMSE + SAD)")
-    print("==========")
+    # print("\n\nGraph ALMM (RMSE + SAD)")
+    # print("==========")
     
-    best_param_graph_almm_RMSE_SAD(X = X_2, A_gt = A_2, S_gt = S_2, N = samples,
-                        maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
+    # best_param_graph_almm_RMSE_SAD(X = X_2, A_gt = A_2, S_gt = S_2, N = samples,
+    #                     maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
 
     # ==========================================
     # jasper
@@ -504,7 +504,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_OH_jasper = parameter_testing_RMSE(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = True)
     
     alpha_1 = params_GLU_OH_jasper[0]
@@ -514,7 +514,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -526,7 +526,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_OH_jasper = parameter_testing(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = True)
     
     alpha_1 = params_GLU_OH_jasper[0]
@@ -536,7 +536,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -548,7 +548,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_exact_jasper = parameter_testing_RMSE(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = False)
     
     alpha_1 = params_GLU_exact_jasper[0]
@@ -558,7 +558,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -570,7 +570,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_exact_jasper = parameter_testing(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = False)
     
     alpha_1 = params_GLU_exact_jasper[0]
@@ -580,7 +580,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -592,7 +592,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_OH_jasper = parameter_testing_RMSE(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = True)
     
     alpha_1 = params_GRSU_OH_jasper[0]
@@ -602,7 +602,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -614,7 +614,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_OH_jasper = parameter_testing(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = True)
     
     alpha_1 = params_GRSU_OH_jasper[0]
@@ -624,7 +624,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -636,7 +636,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_exact_jasper = parameter_testing_RMSE(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = False)
     
     alpha_1 = params_GRSU_exact_jasper[0]
@@ -646,7 +646,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -658,7 +658,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_exact_jasper = parameter_testing(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = False)
     
     alpha_1 = params_GRSU_exact_jasper[0]
@@ -668,7 +668,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_3, A_gt = A_3, S_gt = S_3, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -676,28 +676,28 @@ if __name__ == "__main__":
 
 
 
-    ### ALMM
+    # ### ALMM
 
-    print("\n\nALMM")
-    print("==========")
+    # print("\n\nALMM")
+    # print("==========")
 
-    best_param_almm(X = X_3, A_gt = A_3, S_gt = S_3,
-                    maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0)
+    # best_param_almm(X = X_3, A_gt = A_3, S_gt = S_3,
+    #                 maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0)
 
 
-    ### Graph ALMM
+    # ### Graph ALMM
 
-    print("\n\nGraph ALMM (RMSE)")
-    print("==========")
+    # print("\n\nGraph ALMM (RMSE)")
+    # print("==========")
     
-    best_param_graph_almm(X = X_3, A_gt = A_3, S_gt = S_3, N = samples,
-                        maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
+    # best_param_graph_almm(X = X_3, A_gt = A_3, S_gt = S_3, N = samples,
+    #                     maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
 
-    print("\n\nGraph ALMM (RMSE + SAD)")
-    print("==========")
+    # print("\n\nGraph ALMM (RMSE + SAD)")
+    # print("==========")
     
-    best_param_graph_almm_RMSE_SAD(X = X_3, A_gt = A_3, S_gt = S_3, N = samples,
-                        maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
+    # best_param_graph_almm_RMSE_SAD(X = X_3, A_gt = A_3, S_gt = S_3, N = samples,
+    #                     maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
 
 
     # ==========================================
@@ -718,7 +718,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_OH_apex = parameter_testing_RMSE(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = True)
     
     alpha_1 = params_GLU_OH_apex[0]
@@ -728,7 +728,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -740,7 +740,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_OH_apex = parameter_testing(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = True)
     
     alpha_1 = params_GLU_OH_apex[0]
@@ -750,7 +750,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -762,7 +762,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_exact_apex = parameter_testing_RMSE(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = False)
     
     alpha_1 = params_GLU_exact_apex[0]
@@ -772,7 +772,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -784,7 +784,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GLU_exact_apex = parameter_testing(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = False, OH_labels = False)
     
     alpha_1 = params_GLU_exact_apex[0]
@@ -794,7 +794,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = False, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -806,7 +806,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_OH_apex = parameter_testing_RMSE(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = True)
     
     alpha_1 = params_GRSU_OH_apex[0]
@@ -816,7 +816,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -828,7 +828,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_OH_apex = parameter_testing(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = True)
     
     alpha_1 = params_GRSU_OH_apex[0]
@@ -838,7 +838,7 @@ if __name__ == "__main__":
 
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = True, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
     
@@ -850,7 +850,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_exact_apex = parameter_testing_RMSE(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = False)
     
     alpha_1 = params_GRSU_exact_apex[0]
@@ -860,7 +860,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -872,7 +872,7 @@ if __name__ == "__main__":
     print("==========")
 
     params_GRSU_exact_apex = parameter_testing(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, 
-                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 2, 
+                  iters = iters, alpha = alpha_vals, lam = lam_vals, gamma = gamma_vals, rho = rho_vals, m_0 = 4, 
                   print_bool = False, GRSU_bool = True, OH_labels = False)
     
     alpha_1 = params_GRSU_exact_apex[0]
@@ -882,7 +882,7 @@ if __name__ == "__main__":
     
     # Run algorithm on chosen parameters
     A_f, S_f, A_rmse, S_sad = run_unmixing_pipeline_example(X = X_4, A_gt = A_4, S_gt = S_4, N = samples, iters = iters, 
-                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 2, 
+                                                                                                    alpha = alpha_1, lam = lam_1, gamma = gamma_1, rho = rho_1, m_0 = 4, 
                                                                                                     print_bool = False, OH_labels = False, GRSU_bool = True, 
                                                                                                     A_error = False, RMSE_plot = False, title_0 = "")
 
@@ -890,28 +890,28 @@ if __name__ == "__main__":
 
 
 
-    ### ALMM
+    # ### ALMM
 
-    print("\n\nALMM")
-    print("==========")
+    # print("\n\nALMM")
+    # print("==========")
 
-    best_param_almm(X = X_4, A_gt = A_4, S_gt = S_4,
-                    maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0)
+    # best_param_almm(X = X_4, A_gt = A_4, S_gt = S_4,
+    #                 maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0)
 
 
-    ### Graph ALMM
+    # ### Graph ALMM
 
-    print("\n\nGraph ALMM (RMSE)")
-    print("==========")
+    # print("\n\nGraph ALMM (RMSE)")
+    # print("==========")
     
-    best_param_graph_almm(X = X_4, A_gt = A_4, S_gt = S_4, N = samples,
-                        maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
+    # best_param_graph_almm(X = X_4, A_gt = A_4, S_gt = S_4, N = samples,
+    #                     maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
 
-    print("\n\nGraph ALMM (RMSE + SAD)")
-    print("==========")
+    # print("\n\nGraph ALMM (RMSE + SAD)")
+    # print("==========")
     
-    best_param_graph_almm_RMSE_SAD(X = X_4, A_gt = A_4, S_gt = S_4, N = samples,
-                        maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
+    # best_param_graph_almm_RMSE_SAD(X = X_4, A_gt = A_4, S_gt = S_4, N = samples,
+    #                     maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 4)
 
 
     # ==========================================
@@ -1104,27 +1104,27 @@ if __name__ == "__main__":
 
 
 
-    ### ALMM
+    # ### ALMM
 
-    print("\n\nALMM")
-    print("==========")
+    # print("\n\nALMM")
+    # print("==========")
 
-    best_param_almm(X = X_nl_flat, A_gt = A_gt_nl, S_gt = S_gt_nl,
-                    maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0)
+    # best_param_almm(X = X_nl_flat, A_gt = A_gt_nl, S_gt = S_gt_nl,
+    #                 maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0)
 
-    ### Graph ALMM
+    # ### Graph ALMM
 
-    print("\n\nGraph ALMM (RMSE)")
-    print("==========")
+    # print("\n\nGraph ALMM (RMSE)")
+    # print("==========")
     
-    best_param_graph_almm(X = X_nl_flat, A_gt = A_gt_nl, S_gt = S_gt_nl, N = samples,
-                        maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 2)
+    # best_param_graph_almm(X = X_nl_flat, A_gt = A_gt_nl, S_gt = S_gt_nl, N = samples,
+    #                     maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 2)
 
-    print("\n\nGraph ALMM (RMSE + SAD)")
-    print("==========")
+    # print("\n\nGraph ALMM (RMSE + SAD)")
+    # print("==========")
     
-    best_param_graph_almm_RMSE_SAD(X = X_nl_flat, A_gt = A_gt_nl, S_gt = S_gt_nl, N = samples,
-                        maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 2)
+    # best_param_graph_almm_RMSE_SAD(X = X_nl_flat, A_gt = A_gt_nl, S_gt = S_gt_nl, N = samples,
+    #                     maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 2)
 
     # ==========================================
     # Linear
@@ -1316,28 +1316,28 @@ if __name__ == "__main__":
 
 
 
-    ### ALMM
+    # ### ALMM
 
-    print("\n\nALMM")
-    print("==========")
+    # print("\n\nALMM")
+    # print("==========")
 
-    best_param_almm(X = X_linear, A_gt = A_linear, S_gt = S_linear,
-                    maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0)
+    # best_param_almm(X = X_linear, A_gt = A_linear, S_gt = S_linear,
+    #                 maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0)
 
-    ### Graph ALMM
+    # ### Graph ALMM
 
-    print("\n\nGraph ALMM (RMSE)")
-    print("==========")
+    # print("\n\nGraph ALMM (RMSE)")
+    # print("==========")
     
-    best_param_graph_almm(X = X_linear, A_gt = A_linear, S_gt = S_linear, N = samples,
-                        maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 2)
+    # best_param_graph_almm(X = X_linear, A_gt = A_linear, S_gt = S_linear, N = samples,
+    #                     maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 2)
     
 
-    print("\n\nGraph ALMM (RMSE + SAD)")
-    print("==========")
+    # print("\n\nGraph ALMM (RMSE + SAD)")
+    # print("==========")
     
-    best_param_graph_almm_RMSE_SAD(X = X_linear, A_gt = A_linear, S_gt = S_linear, N = samples,
-                        maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 2)
+    # best_param_graph_almm_RMSE_SAD(X = X_linear, A_gt = A_linear, S_gt = S_linear, N = samples,
+    #                     maxIter = iters, alpha_0 = alpha_0, beta_0 = beta_0, gamma_0 = gamma_0, eta_0 = eta_0, m_0 = 2)
     
 
     # ==========================================

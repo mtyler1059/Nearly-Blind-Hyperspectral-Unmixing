@@ -1,0 +1,600 @@
+==========================================
+Starting Testing
+
+
+==========================================
+Testing on Urban
+==========================================
+Keys in the dataset: dict_keys(['A', 'S', 'err_all', 'X', 'dataset', 'shape', 't_MSC', 't_EGU'])
+Type of X: <class 'numpy.ndarray'>
+Shape of X: (162, 94249)
+
+Type of A: <class 'dict'>
+Keys inside A: dict_keys(['A_ref', 'A_fclsu', 'A_MBO', 'A_graphL', 'A_MSC', 'A_qmv', 'A_nmf', 'A_EGU'])
+
+Type of S: <class 'dict'>
+Keys inside S: dict_keys(['S_ref', 'S_fclsu', 'S_MBO', 'S_graphL', 'S_MSC', 'S_qmv', 'S_nmf', 'S_EGU'])
+X (reshaped): (162, 2500)
+
+
+GLU (OH) (RMSE)
+==========
+Best RMSE: 16.515091863060118
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 16.515091863060118
+ SAD: 6.27405089498243
+
+
+GLU (OH) (RMSE + SAD)
+==========
+Best RMSE + SAD: 20.604754586570657
+Best alpha: 20
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 16.515091863060118
+ SAD: 4.08966272351054
+
+GLU (Exact) (RMSE)
+==========
+Best RMSE: 15.091276758936765
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 15.091276758936765
+ SAD: 11.700478855063887
+
+GLU (Exact) (RMSE + SAD)
+==========
+Best RMSE + SAD: 24.804641262486346
+Best alpha: 100
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 15.091276758936765
+ SAD: 9.713364503549581
+
+
+GRSU (OH) (RMSE)
+==========
+Best RMSE: 12.773405185407343
+Best alpha: 10
+Best lambda: 100
+Best gamma: 0.1
+Best rho: 0.1
+RMSE: 12.773405185407343
+ SAD: 6.685335455213946
+
+
+GRSU (OH) (RMSE + SAD)
+==========
+Best RMSE + SAD: 18.647888671426852
+Best alpha: 20
+Best lambda: 10
+Best gamma: 0.01
+Best rho: 0.1
+RMSE: 14.545952828433787
+ SAD: 4.101935842993066
+
+GRSU (Exact) (RMSE)
+==========
+Best RMSE: 11.944299921789318
+Best alpha: 50
+Best lambda: 5
+Best gamma: 100.0
+Best rho: 1.0
+RMSE: 11.944299921789318
+ SAD: 9.594314161215735
+
+GRSU (Exact) (RMSE + SAD)
+==========
+Best RMSE + SAD: 21.499243045176836
+Best alpha: 50
+Best lambda: 10
+Best gamma: 100.0
+Best rho: 10.0
+RMSE: 12.120692338987968
+ SAD: 9.378550706188868
+
+
+==========================================
+Testing on Samson
+==========================================
+Keys in the dataset: dict_keys(['A', 'S', 'err_all', 'X', 'dataset', 'shape', 't_MSC', 't_EGU'])
+Type of X: <class 'numpy.ndarray'>
+Shape of X: (156, 9025)
+
+Type of A: <class 'dict'>
+Keys inside A: dict_keys(['A_ref', 'A_fclsu', 'A_MBO', 'A_graphL', 'A_MSC', 'A_qmv', 'A_nmf', 'A_EGU'])
+
+Type of S: <class 'dict'>
+Keys inside S: dict_keys(['S_ref', 'S_fclsu', 'S_MBO', 'S_graphL', 'S_MSC', 'S_qmv', 'S_nmf', 'S_EGU'])
+X (reshaped): (156, 2500)
+
+
+GLU (OH) (RMSE)
+==========
+Best RMSE: 6.65321080024017
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 6.65321080024017
+ SAD: 24.466450393951085
+
+
+GLU (OH) (RMSE + SAD)
+==========
+Best RMSE + SAD: 31.119661194191256
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 6.65321080024017
+ SAD: 24.466450393951085
+
+GLU (Exact) (RMSE)
+==========
+Best RMSE: 5.163908698314139
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 5.163908698314139
+ SAD: 15.094181266095585
+
+GLU (Exact) (RMSE + SAD)
+==========
+Best RMSE + SAD: 20.258089964409724
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 5.163908698314139
+ SAD: 15.094181266095585
+
+
+GRSU (OH) (RMSE)
+==========
+Best RMSE: 3.550307233400664
+Best alpha: 10
+Best lambda: 10
+Best gamma: 0.1
+Best rho: 0.1
+RMSE: 3.550307233400664
+ SAD: 30.89777598281856
+
+
+GRSU (OH) (RMSE + SAD)
+==========
+Best RMSE + SAD: 19.726397883673958
+Best alpha: 20
+Best lambda: 5000
+Best gamma: 0.1
+Best rho: 10.0
+RMSE: 6.635968421280331
+ SAD: 13.090429462393628
+
+GRSU (Exact) (RMSE)
+==========
+Best RMSE: 3.448129761344777
+Best alpha: 20
+Best lambda: 50
+Best gamma: 10.0
+Best rho: 1.0
+RMSE: 3.448129761344777
+ SAD: 23.88172076046067
+
+GRSU (Exact) (RMSE + SAD)
+==========
+Best RMSE + SAD: 16.03962722016106
+Best alpha: 10
+Best lambda: 1000
+Best gamma: 1.0
+Best rho: 0.01
+RMSE: 7.293666819122271
+ SAD: 8.745960401038788
+
+
+==========================================
+Testing on jasper
+==========================================
+Keys in the dataset: dict_keys(['A', 'S', 'err_all', 'X', 'dataset', 'shape', 't_MSC', 't_EGU'])
+Type of X: <class 'numpy.ndarray'>
+Shape of X: (198, 10000)
+
+Type of A: <class 'dict'>
+Keys inside A: dict_keys(['A_ref', 'A_fclsu', 'A_MBO', 'A_graphL', 'A_MSC', 'A_qmv', 'A_nmf', 'A_EGU'])
+
+Type of S: <class 'dict'>
+Keys inside S: dict_keys(['S_ref', 'S_fclsu', 'S_MBO', 'S_graphL', 'S_MSC', 'S_qmv', 'S_nmf', 'S_EGU'])
+X (reshaped): (198, 2500)
+
+
+GLU (OH) (RMSE)
+==========
+Best RMSE: 10.783719783844907
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 10.783719783844907
+ SAD: 8.43143426694995
+
+
+GLU (OH) (RMSE + SAD)
+==========
+Best RMSE + SAD: 17.45981403250206
+Best alpha: 20
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 10.783719783844907
+ SAD: 6.676094248657153
+
+GLU (Exact) (RMSE)
+==========
+Best RMSE: 13.395562298512884
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 13.395562298512884
+ SAD: 9.30356727760364
+
+GLU (Exact) (RMSE + SAD)
+==========
+Best RMSE + SAD: 21.427111061315582
+Best alpha: 100
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 13.395562298512884
+ SAD: 8.031548762802698
+
+
+GRSU (OH) (RMSE)
+==========
+Best RMSE: 7.874485848794502
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 1.0
+RMSE: 7.874485848794502
+ SAD: 5.331227681041914
+
+
+GRSU (OH) (RMSE + SAD)
+==========
+Best RMSE + SAD: 13.122836837262442
+Best alpha: 10
+Best lambda: 1
+Best gamma: 100.0
+Best rho: 1.0
+RMSE: 7.875529010734364
+ SAD: 5.247307826528078
+
+GRSU (Exact) (RMSE)
+==========
+Best RMSE: 6.358587865401678
+Best alpha: 100
+Best lambda: 1
+Best gamma: 100.0
+Best rho: 1.0
+RMSE: 6.358587865401678
+ SAD: 7.995656947729099
+
+GRSU (Exact) (RMSE + SAD)
+==========
+Best RMSE + SAD: 14.18297409740865
+Best alpha: 20
+Best lambda: 1
+Best gamma: 100.0
+Best rho: 1.0
+RMSE: 6.513450668466827
+ SAD: 7.669523428941822
+
+
+==========================================
+Testing on apex
+==========================================
+Keys in the dataset: dict_keys(['A', 'S', 'err_all', 'X', 'dataset', 'shape', 't_MSC', 't_EGU'])
+Type of X: <class 'numpy.ndarray'>
+Shape of X: (285, 13542)
+
+Type of A: <class 'dict'>
+Keys inside A: dict_keys(['A_ref', 'A_fclsu', 'A_MBO', 'A_graphL', 'A_MSC', 'A_qmv', 'A_nmf', 'A_EGU'])
+
+Type of S: <class 'dict'>
+Keys inside S: dict_keys(['S_ref', 'S_fclsu', 'S_MBO', 'S_graphL', 'S_MSC', 'S_qmv', 'S_nmf', 'S_EGU'])
+X (reshaped): (285, 2500)
+
+
+GLU (OH) (RMSE)
+==========
+Best RMSE: 20.342800377272443
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 20.342800377272443
+ SAD: 27.608475281425953
+
+
+GLU (OH) (RMSE + SAD)
+==========
+Best RMSE + SAD: 47.95127565869839
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 20.342800377272443
+ SAD: 27.608475281425953
+
+GLU (Exact) (RMSE)
+==========
+Best RMSE: 20.88222042048617
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 20.88222042048617
+ SAD: 39.70450446532521
+
+GLU (Exact) (RMSE + SAD)
+==========
+Best RMSE + SAD: 60.58672488581138
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 20.88222042048617
+ SAD: 39.70450446532521
+
+
+GRSU (OH) (RMSE)
+==========
+Best RMSE: 13.65130520617818
+Best alpha: 10
+Best lambda: 1
+Best gamma: 10.0
+Best rho: 100.0
+RMSE: 13.65130520617818
+ SAD: 27.63435553533374
+
+
+GRSU (OH) (RMSE + SAD)
+==========
+Best RMSE + SAD: 37.94048585201743
+Best alpha: 10
+Best lambda: 100
+Best gamma: 10.0
+Best rho: 0.1
+RMSE: 16.15335063742745
+ SAD: 21.787135214589984
+
+GRSU (Exact) (RMSE)
+==========
+Best RMSE: 11.208067044225308
+Best alpha: 20
+Best lambda: 1
+Best gamma: 100.0
+Best rho: 10.0
+RMSE: 11.208067044225308
+ SAD: 40.76096097652306
+
+GRSU (Exact) (RMSE + SAD)
+==========
+Best RMSE + SAD: 49.68693394526224
+Best alpha: 10
+Best lambda: 1
+Best gamma: 10.0
+Best rho: 10.0
+RMSE: 12.207081805057316
+ SAD: 37.479852140204926
+
+
+==========================================
+Testing on Nonlinear
+==========================================
+Keys in the dataset: dict_keys(['X', 'A_gt', 'S_gt'])
+Shape of X (HSI Image): (10, 250, 30)
+Shape of A_gt (Abundance Map): (2, 2500)
+Shape of S_gt (Endmember Spectra): (30, 2)
+
+First pixel's spectra in X:
+ [0.53910909 0.46784716 0.51651596 0.51511246 0.54243879 0.52064358
+ 0.51943605 0.52593777 0.53434579 0.51118315 0.51952582 0.45491021
+ 0.48604329 0.50390983 0.47451358 0.48900189 0.55472187 0.53542633
+ 0.46566486 0.46165341 0.51478674 0.51466119 0.51180038 0.5016153
+ 0.53460008 0.47453781 0.47549698 0.51345648 0.47629452 0.53555711]
+(30, 2500)
+<class 'numpy.ndarray'>
+(30, 2)
+float64
+<class 'numpy.ndarray'>
+(2, 2500)
+float64
+Shape of X: (30, 2500)
+
+
+GLU (OH) (RMSE)
+==========
+Best RMSE: 27.072536191060763
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 27.072536191060763
+ SAD: 15.474725816753601
+
+
+GLU (OH) (RMSE + SAD)
+==========
+Best RMSE + SAD: 42.48586925173367
+Best alpha: 100
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 27.072536191060763
+ SAD: 15.413333060672905
+
+GLU (Exact) (RMSE)
+==========
+Best RMSE: 1.22317847208902
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 1.22317847208902
+ SAD: 18.95837944301178
+
+GLU (Exact) (RMSE + SAD)
+==========
+Best RMSE + SAD: 20.101762607090624
+Best alpha: 100
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 1.22317847208902
+ SAD: 18.878584135001603
+
+
+GRSU (OH) (RMSE)
+==========
+Best RMSE: 12.33336375953646
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 10.0
+RMSE: 12.33336375953646
+ SAD: 16.153639067076753
+
+
+GRSU (OH) (RMSE + SAD)
+==========
+Best RMSE + SAD: 28.487002826613214
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 10.0
+RMSE: 12.33336375953646
+ SAD: 16.153639067076753
+
+GRSU (Exact) (RMSE)
+==========
+Best RMSE: 1.1966843985873439
+Best alpha: 20
+Best lambda: 5000
+Best gamma: 100.0
+Best rho: 0.01
+RMSE: 1.1966843985873439
+ SAD: 18.918320717857043
+
+GRSU (Exact) (RMSE + SAD)
+==========
+Best RMSE + SAD: 20.07700339747558
+Best alpha: 100
+Best lambda: 5000
+Best gamma: 100.0
+Best rho: 0.01
+RMSE: 1.1984390910008589
+ SAD: 18.87856430647472
+
+
+==========================================
+Testing on Linear
+==========================================
+
+
+GLU (OH) (RMSE)
+==========
+Best RMSE: 21.39481515797743
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 21.39481515797743
+ SAD: 3.046165838405078
+
+
+GLU (OH) (RMSE + SAD)
+==========
+Best RMSE + SAD: 24.440980996382507
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 21.39481515797743
+ SAD: 3.046165838405078
+
+GLU (Exact) (RMSE)
+==========
+Best RMSE: 23.414307995809217
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 23.414307995809217
+ SAD: 3.8965401969239424
+
+GLU (Exact) (RMSE + SAD)
+==========
+Best RMSE + SAD: 26.91827070290401
+Best alpha: 20
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 23.414307995809217
+ SAD: 3.5039627070947925
+
+
+GRSU (OH) (RMSE)
+==========
+Best RMSE: 3.5613649007802097
+Best alpha: 20
+Best lambda: 10
+Best gamma: 0.01
+Best rho: 0.1
+RMSE: 3.5613649007802097
+ SAD: 3.817938855168785
+
+
+GRSU (OH) (RMSE + SAD)
+==========
+Best RMSE + SAD: 6.017638007729815
+Best alpha: 10
+Best lambda: 10
+Best gamma: 0.01
+Best rho: 0.1
+RMSE: 3.6447623809258936
+ SAD: 2.372875626803921
+
+GRSU (Exact) (RMSE)
+==========
+Best RMSE: 2.544210846845358
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 2.544210846845358
+ SAD: 1.3396418043495149
+
+GRSU (Exact) (RMSE + SAD)
+==========
+Best RMSE + SAD: 3.8838526511948728
+Best alpha: 10
+Best lambda: 1
+Best gamma: 0.01
+Best rho: 0.01
+RMSE: 2.544210846845358
+ SAD: 1.3396418043495149
+
+
+Finished Testing
+==========================================
+
