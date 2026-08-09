@@ -2163,7 +2163,7 @@ def graph_plotter_multiple(A_error, RMSE_plot, Energy_plot, A_error_data, RMSE_d
 
 
 
-def load_data(name, typename, sample = False, print_bool = True):
+def load_data(name, typename, sample = False, print_bool = True, H = 307, W = 307):
 
     """
     Loads data into X, S, and A.
@@ -2175,7 +2175,10 @@ def load_data(name, typename, sample = False, print_bool = True):
         'synth_CuSO4_data' (CuSO4 data)         
         'synth_FeCl3_data' (FeCl3 data)
         'synth_FeSO4_data' (FeSO4 data)
-        'processed_data/processed_data/urban/urban_processed_data.npy' (Urban dataset)
+        'processed_data/processed_data/urban/urban_processed_data.npy' (Urban dataset) (307 x 307)
+        'processed_data/processed_data/samson/samson_processed_data.npy' (Samson dataset) (95 x 95)
+        'processed_data/processed_data/jasper/jasper_processed_data.npy' (Jasper Ridge dataset) (100 x 100)
+        'processed_data/processed_data/apex/apex_processed_data.npy' (Apex dataset) (111 x 122)
 
     type (string): Type of dataset loaded. Options include:
         'chem'
@@ -2279,22 +2282,57 @@ def load_data(name, typename, sample = False, print_bool = True):
         return X_gt_flat, S_gt, A_gt 
     elif typename == 'HSI':
 
-        # Sample 50x50 patch or return the entire image
+        # # Sample 50x50 patch or return the entire image
+        # if sample == True:
+
+        #     # Example: grab a 50x50 spatial patch instead of random pixels
+        #     #H, W = 307, 307
+        #     patch_size = 50
+        #     row_start, col_start = 100, 100  # pick wherever
+
+        #     X_HSI_img = X_gt.T.reshape(H, W, -1)  # reshape to (307, 307, p)
+        #     patch = X_HSI_img[row_start:row_start+patch_size, col_start:col_start+patch_size, :]
+        #     X_HSI_test = patch.reshape(-1, patch.shape[-1]).T  # back to (p, N_patch)
+        #     if print_bool:
+        #         print("X (reshaped):", X_HSI_test.shape)
+
+        #     A_gt_HSI_img = A_gt_HSI.T.reshape(H, W, -1)
+        #     patch_gt_HSI = A_gt_HSI_img[row_start:row_start+patch_size, col_start:col_start+patch_size, :]
+        #     A_gt_HSI_test = patch_gt_HSI.reshape(-1, patch_gt_HSI.shape[-1]).T
+
+        #     return X_HSI_test, S_gt_HSI, A_gt_HSI_test
+
+        # Sample 50x50 patch or return the entire image (needs doubel checking)
         if sample == True:
 
-            # Example: grab a 50x50 spatial patch instead of random pixels
-            H, W = 307, 307
             patch_size = 50
-            row_start, col_start = 100, 100  # pick wherever
 
-            X_HSI_img = X_gt.T.reshape(H, W, -1)  # reshape to (307, 307, p)
-            patch = X_HSI_img[row_start:row_start+patch_size, col_start:col_start+patch_size, :]
-            X_HSI_test = patch.reshape(-1, patch.shape[-1]).T  # back to (p, N_patch)
+            # Original dataset uses (100, 100)
+            # Scale the location for other image sizes
+            row_start = round(100 * H / 307)
+            col_start = round(100 * W / 307)
+
+            X_HSI_img = X_gt.T.reshape(H, W, -1)
+
+            patch = X_HSI_img[
+                row_start:row_start + patch_size,
+                col_start:col_start + patch_size,
+                :
+            ]
+
+            X_HSI_test = patch.reshape(-1, patch.shape[-1]).T
+
             if print_bool:
                 print("X (reshaped):", X_HSI_test.shape)
 
             A_gt_HSI_img = A_gt_HSI.T.reshape(H, W, -1)
-            patch_gt_HSI = A_gt_HSI_img[row_start:row_start+patch_size, col_start:col_start+patch_size, :]
+
+            patch_gt_HSI = A_gt_HSI_img[
+                row_start:row_start + patch_size,
+                col_start:col_start + patch_size,
+                :
+            ]
+
             A_gt_HSI_test = patch_gt_HSI.reshape(-1, patch_gt_HSI.shape[-1]).T
 
             return X_HSI_test, S_gt_HSI, A_gt_HSI_test
