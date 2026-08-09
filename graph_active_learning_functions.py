@@ -2883,6 +2883,49 @@ def abundance_plotting(X, A_gt, A_f_GLU, A_f_GRSU, A_f_ALMM, A_f_Graph_ALMM, tit
 
 
 
+
+
+def image_plotting(A_gt, A_f_GLU, A_f_GRSU, A_f_ALMM, A_f_Graph_ALMM, k, col, patch_size, class_names, algo_names):
+
+    # Plot the images
+    fig, axes =  plt.subplots(nrows=k, ncols=col, figsize=(7 ,7))
+    A_gt_img = A_gt.reshape(k,patch_size,patch_size)
+    A_f_GLU_img = A_f_GLU.reshape(k,patch_size,patch_size)
+    A_f_GRSU_img = A_f_GRSU.reshape(k,patch_size,patch_size)
+    A_f_ALMM_img = A_f_ALMM.reshape(k,patch_size,patch_size)
+    A_f_Graph_ALMM_img = A_f_Graph_ALMM.reshape(k,patch_size,patch_size)
+
+    # class_names = ['Asphalt', 'Grass', 'Tree', 'Roof']
+    # algo_names = ['Ground Truth', 'GLU', 'GRSU', 'ALMM', 'ALMM-GLU']
+
+    # Print image of each algorithm with endmembers in this order: Asphalt, Grass, Tree, Roof
+    for i in range(k):
+        axes[i,0].pcolormesh(A_gt_img[i], cmap='viridis')
+        axes[i,1].pcolormesh(A_f_GLU_img[i], cmap='viridis')
+        axes[i,2].pcolormesh(A_f_GRSU_img[i], cmap='viridis')
+        axes[i,3].pcolormesh(A_f_ALMM_img[i], cmap='viridis')
+        axes[i,4].pcolormesh(A_f_Graph_ALMM_img[i], cmap='viridis')
+
+        axes[i,0].set_ylabel(class_names[i], fontsize=11) # Add endmember titles
+
+    for j in range(col):
+        axes[0, j].set_title(algo_names[j], fontsize=12)
+
+    return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 def compute_I1_I2(A, A_hat, W, M):
     W_uu = W[M:, M:] # unlabeled to unlabeled
