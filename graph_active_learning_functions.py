@@ -952,6 +952,9 @@ def parameter_testing(X, A_gt, S_gt, N, iters, alpha, lam, gamma, rho, m_0, prin
     results = Parallel(n_jobs =-1)(
         delayed(sum_RMSE_SAD)(X, A_gt, S_gt, N, iters, alpha_0, lam_0, gamma_0, rho_0, m_0, print_bool, OH_labels, GRSU_bool, prep) for alpha_0, lam_0, gamma_0, rho_0 in combos
     )
+    # Check for NaN/Inf before doing anything else with results
+    print("Any NaN in results:", np.isnan(np.array(results)).any())
+    print("Any Inf in results:", np.isinf(np.array(results)).any())
 
     # Create a 4D array to match the set order
     results = np.array(results).reshape(len(alpha), len(lam), len(gamma), len(rho))
